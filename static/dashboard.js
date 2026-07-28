@@ -162,10 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             loadingSpinner.style.display = 'none';
 
-            const countBadge = document.getElementById('agencies-count-badge');
-            if (countBadge) {
+            const menuCount = document.getElementById('agencies-menu-count');
+            if (menuCount) {
                 const count = agencies ? agencies.length : 0;
-                countBadge.textContent = `${count} Acente Listelendi`;
+                menuCount.textContent = `${count} Acente`;
             }
 
             if (!agencies || agencies.length === 0) {
