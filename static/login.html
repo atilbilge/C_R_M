@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap | Stanomer CRM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fdf6e3;
+            --bg-secondary: #eee8d5;
+            --bg-card: #fdf6e3;
+            --text-primary: #073642;
+            --text-secondary: #586e75;
+            --text-muted: #93a1a1;
+            --border-color: #d3cbb7;
+            --accent-cyan: #2aa198;
+            --accent-blue: #268bd2;
+            --accent-orange: #cb4b16;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow: 0 8px 30px rgba(7, 54, 66, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .login-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .brand-header {
+            margin-bottom: 2rem;
+        }
+
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #ffffff;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 14px rgba(42, 161, 152, 0.3);
+        }
+
+        .brand-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            text-align: left;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.prefix-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.85rem 2.8rem 0.85rem 2.7rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(42, 161, 152, 0.15);
+        }
+
+        .toggle-pwd {
+            position: absolute;
+            right: 1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .toggle-pwd:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-login {
+            background: var(--accent-cyan);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.85rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-login:hover {
+            background: #258f87;
+            transform: translateY(-1px);
+        }
+
+        .error-message {
+            background: rgba(203, 75, 22, 0.1);
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="brand-header">
+            <div class="brand-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h1 class="brand-title">Stanomer CRM</h1>
+            <p class="brand-subtitle">Güvenli Giriş Paneli</p>
+        </div>
+
+        <form id="login-form" class="login-form">
+            <div id="error-box" class="error-message">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="error-text">Hatalı şifre. Lütfen tekrar deneyin.</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Erişim Şifresi</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-key prefix-icon"></i>
+                    <input type="password" id="password" placeholder="Şifrenizi girin..." required autofocus autocomplete="current-password">
+                    <i class="fa-solid fa-eye toggle-pwd" id="toggle-pwd" title="Şifreyi Göster/Gizle"></i>
+                </div>
+            </div>
+
+            <button type="submit" id="btn-submit" class="btn-login">
+                <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap
+            </button>
+        </form>
+
+        <div class="footer-note">
+            &copy; 2026 Stanomer CRM &bull; Güvenli Bağlantı
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const passwordInput = document.getElementById('password');
+        const togglePwd = document.getElementById('toggle-pwd');
+        const errorBox = document.getElementById('error-box');
+        const errorText = document.getElementById('error-text');
+        const btnSubmit = document.getElementById('btn-submit');
+
+        togglePwd.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            togglePwd.className = isPassword ? 'fa-solid fa-eye-slash toggle-pwd' : 'fa-solid fa-eye toggle-pwd';
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorBox.style.display = 'none';
+
+            const password = passwordInput.value.trim();
+            if (!password) return;
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kontrol Ediliyor...';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    window.location.href = data.redirect || '/';
+                } else {
+                    errorText.textContent = data.error || 'Hatalı şifre. Lütfen tekrar deneyin.';
+                    errorBox.style.display = 'flex';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            } catch (err) {
+                errorText.textContent = 'Sunucu ile iletişim kurulamadı.';
+                errorBox.style.display = 'flex';
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Giriş Yap';
+            }
+        });
+    </script>
+</body>
+</html>

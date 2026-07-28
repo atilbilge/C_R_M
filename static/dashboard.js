@@ -824,6 +824,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Logout Button Click Handler
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+            if (confirm('Oturumu kapatmak istediğinize emin misiniz?')) {
+                try {
+                    const res = await fetch('/api/logout', { method: 'POST' });
+                    const data = await res.json();
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                } catch (err) {
+                    console.error('Çıkış yapma hatası:', err);
+                }
+            }
+        });
+    }
+
     // Initial Load
     loadStats();
     loadAgencies();

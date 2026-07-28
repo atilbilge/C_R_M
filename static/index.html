@@ -66,13 +66,16 @@
                     <input type="text" id="global-search" placeholder="Acente adı, şehir, telefon veya e-posta ara...">
                 </div>
 
-                <div class="header-actions" style="display: flex; align-items: center; gap: 1rem;">
+                <div class="header-actions" style="display: flex; align-items: center; gap: 0.75rem;">
                     <div id="sync-status-badge" class="sync-badge" title="Tüm gelen/giden e-postaları yenilemek için tıklayın" style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition);">
                         <i class="fa-solid fa-rotate" id="sync-icon" style="color: var(--accent-indigo);"></i>
                         <span>Son Yenileme: <strong id="last-sync-time" style="color: var(--text-primary);">Henüz Yapılmadı</strong></span>
                     </div>
                     <button class="btn btn-primary" id="btn-quick-add">
                         <i class="fa-solid fa-plus"></i> Yeni İletişim Kaydı
+                    </button>
+                    <button class="btn btn-secondary" id="btn-logout" title="Oturumu Kapat" style="padding: 0.5rem 0.8rem;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Çıkış
                     </button>
                 </div>
             </header>
@@ -435,6 +438,6 @@
     </div>
 
     <!-- Dashboard JS -->
-    <script src="/static/dashboard.js?v=18"></script>
+    <script src="/static/dashboard.js?v=19"></script>
 </body>
 </html>

@@ -9,13 +9,55 @@ import os
 import sys
 import json
 from datetime import datetime, timedelta
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, session, redirect, url_for
 import db
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "stanomer_crm_secret_key_2026_super_secure")
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "stanomer2026")
 
 # Veritabanını başlat
 db.init_db()
+
+
+@app.before_request
+def check_auth():
+    """Giriş kontrolü middleware"""
+    allowed_routes = ["login", "login_api", "static"]
+    if request.endpoint in allowed_routes:
+        return
+    if request.path.startswith("/static/"):
+        return
+    if not session.get("authenticated"):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Yetkisiz erişim. Lütfen giriş yapın."}), 401
+        return redirect(url_for("login"))
+
+
+@app.route("/login", methods=["GET"])
+def login():
+    """Giriş Sayfası"""
+    if session.get("authenticated"):
+        return redirect(url_for("index"))
+    return send_from_directory("static", "login.html")
+
+
+@app.route("/api/login", methods=["POST"])
+def login_api():
+    """Şifre ile Giriş Yapma Endpoint'i"""
+    data = request.json or {}
+    password = data.get("password", "")
+    if password == APP_PASSWORD:
+        session["authenticated"] = True
+        return jsonify({"success": True, "redirect": "/"})
+    return jsonify({"error": "Hatalı şifre. Lütfen tekrar deneyin."}), 401
+
+
+@app.route("/api/logout", methods=["POST"])
+def logout_api():
+    """Çıkış Yapma Endpoint'i"""
+    session.clear()
+    return jsonify({"success": True, "redirect": "/login"})
 
 
 @app.route("/")
