@@ -85,7 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             statTotal.textContent = data.total_agencies || 0;
             statPhones.textContent = data.total_phones || 0;
-            badgeAgenciesCount.textContent = data.total_agencies || 0;
+            
+            const agenciesMenuCount = document.getElementById('agencies-menu-count');
+            if (agenciesMenuCount) {
+                agenciesMenuCount.textContent = `${data.total_agencies || 0} Acente`;
+            }
 
             const respondedCount = data.status_distribution?.RESPONDED || 0;
             const sentCount = data.status_distribution?.SENT || 0;
