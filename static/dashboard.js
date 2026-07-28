@@ -162,6 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             loadingSpinner.style.display = 'none';
 
+            const countBadge = document.getElementById('agencies-count-badge');
+            if (countBadge) {
+                const count = agencies ? agencies.length : 0;
+                countBadge.textContent = `${count} Acente Listelendi`;
+            }
+
             if (!agencies || agencies.length === 0) {
                 tbodyAgencies.innerHTML = `
                     <tr>
