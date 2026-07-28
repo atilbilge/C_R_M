@@ -283,52 +283,77 @@ def sync_emails_route():
 
 NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "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")
 NVIDIA_MODEL = "meta/llama-3.3-70b-instruct"
+TRANSLATION_CACHE = {}
+
+
+def clean_text_for_llm(raw_text: str) -> str:
+    """Mesaj metninden HTML etiketi ve stilleri temizleyerek sade metin döner."""
+    if "<" in raw_text and ">" in raw_text:
+        import re
+        clean = re.sub(r"<style[^>]*>.*?</style>", "", raw_text, flags=re.DOTALL | re.IGNORECASE)
+        clean = re.sub(r"<script[^>]*>.*?</script>", "", clean, flags=re.DOTALL | re.IGNORECASE)
+        clean = re.sub(r"<[^>]+>", " ", clean)
+        clean = re.sub(r"\s+", " ", clean).strip()
+        return clean
+    return raw_text.strip()
 
 
 @app.route("/api/translate", methods=["POST"])
 def translate_text_route():
-    """NVIDIA NIM API kullanarak mesaj metnini Türkçe'ye çevirir."""
+    """NVIDIA NIM API kullanarak mesaj metnini Türkçe'ye çevirir (Önbellekli & Otomatik Tekrar Denemeli)."""
+    import urllib.request
+    import time
+
     data = request.json or {}
-    text = data.get("text", "").strip()
-    if not text:
+    raw_text = data.get("text", "").strip()
+    if not raw_text:
         return jsonify({"error": "Çevrilecek metin bulunamadı."}), 400
 
-    is_html = "<!DOCTYPE" in text or "<html" in text or "<table" in text
+    plain_text = clean_text_for_llm(raw_text)[:2000]
 
-    system_prompt = (
-        "You are an expert professional translator. Translate the given Serbian/English text into natural, fluent Turkish. "
-        "Do not summarize. Output ONLY the Turkish translation, with no introductory text, notes, or explanations."
-    )
-    if is_html:
-        system_prompt += " Preserve all HTML tags, layout, and formatting intact. Only translate the human-readable text contents."
+    # Check cache
+    if plain_text in TRANSLATION_CACHE:
+        return jsonify({
+            "translated_text": TRANSLATION_CACHE[plain_text],
+            "model": NVIDIA_MODEL,
+            "cached": True
+        })
 
     payload = {
         "model": NVIDIA_MODEL,
         "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": text[:4000]}
+            {
+                "role": "system",
+                "content": "You are a professional translator. Translate the given Serbian or English text into natural, fluent Turkish. Output ONLY the Turkish translation, no intro or notes."
+            },
+            {"role": "user", "content": plain_text}
         ],
         "temperature": 0.2,
-        "max_tokens": 2048
+        "max_tokens": 1024
     }
 
-    try:
-        import urllib.request
-        req = urllib.request.Request(
-            "https://integrate.api.nvidia.com/v1/chat/completions",
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {NVIDIA_API_KEY}",
-                "Content-Type": "application/json"
-            }
-        )
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            res_data = json.loads(resp.read().decode("utf-8"))
-            translated = res_data["choices"][0]["message"]["content"].strip()
-            return jsonify({"translated_text": translated, "model": NVIDIA_MODEL})
-    except Exception as e:
-        print("NVIDIA NIM Translation error:", e)
-        return jsonify({"error": f"Çeviri hatası: {str(e)}"}), 500
+    last_error = None
+    for attempt in range(1, 4):
+        try:
+            req = urllib.request.Request(
+                "https://integrate.api.nvidia.com/v1/chat/completions",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {NVIDIA_API_KEY}",
+                    "Content-Type": "application/json"
+                }
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                res_data = json.loads(resp.read().decode("utf-8"))
+                translated = res_data["choices"][0]["message"]["content"].strip()
+                TRANSLATION_CACHE[plain_text] = translated
+                return jsonify({"translated_text": translated, "model": NVIDIA_MODEL, "attempt": attempt})
+        except Exception as e:
+            last_error = str(e)
+            print(f"NVIDIA NIM Translation Attempt {attempt} failed: {e}")
+            time.sleep(1)
+
+    return jsonify({"error": f"Çeviri zaman aşımına uğradı veya servis yanıt vermedi. ({last_error})"}), 500
 
 
 if __name__ == "__main__":
