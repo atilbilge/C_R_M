@@ -1,0 +1,533 @@
+/**
+ * Stanomer Acente CRM - Frontend Dashboard Logic
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+    let currentFilterCity = '';
+    let currentFilterStatus = '';
+    let currentFilterSource = '';
+    let currentFilterHasPhone = '';
+    let currentFilterHasEmail = '';
+    let currentSearchQuery = '';
+    let selectedAgencyId = null;
+
+    // DOM References
+    const navItems = document.querySelectorAll('.nav-menu .nav-item');
+    const tabViews = document.querySelectorAll('.tab-view');
+
+    const statTotal = document.getElementById('stat-total-agencies');
+    const statResponded = document.getElementById('stat-responded');
+    const statSent = document.getElementById('stat-sent');
+    const statPhones = document.getElementById('stat-phones');
+    const badgeAgenciesCount = document.getElementById('agencies-count-badge');
+
+    const filterCitySelect = document.getElementById('filter-city');
+    const statusPills = document.querySelectorAll('.status-pills .pill');
+    const globalSearchInput = document.getElementById('global-search');
+
+    const tbodyAgencies = document.getElementById('agencies-tbody');
+    const loadingSpinner = document.getElementById('table-loading');
+
+    const agencyModal = document.getElementById('agency-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    const addCommModal = document.getElementById('add-comm-modal');
+    const btnQuickAdd = document.getElementById('btn-quick-add');
+    const btnAddCommModal = document.getElementById('btn-add-comm-modal');
+    const addCommCloseBtn = document.getElementById('add-comm-close-btn');
+    const addCommCancelBtn = document.getElementById('add-comm-cancel');
+    const addCommForm = document.getElementById('add-comm-form');
+    const commAgencySelect = document.getElementById('comm-agency-select');
+
+    const commsFeedList = document.getElementById('comms-feed-list');
+    const filterCommChannel = document.getElementById('filter-comm-channel');
+    const referralsTbody = document.getElementById('referrals-tbody');
+
+    const dashboardRecentAgencies = document.getElementById('dashboard-recent-agencies');
+    const dashboardCitiesList = document.getElementById('dashboard-cities-list');
+
+    // 0. Tab Navigation Toggle Function
+    window.switchToTab = function(targetId) {
+        navItems.forEach(item => {
+            if (item.getAttribute('data-target') === targetId) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        tabViews.forEach(view => {
+            if (view.id === targetId) {
+                view.classList.add('active');
+            } else {
+                view.classList.remove('active');
+            }
+        });
+
+        if (targetId === 'view-comms') loadCommunicationsFeed();
+        if (targetId === 'view-referrals') loadReferralsOverview();
+        if (targetId === 'view-agencies') loadAgencies();
+    };
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('data-target');
+            if (targetId) switchToTab(targetId);
+        });
+    });
+
+    // 1. Fetch & Render Overall Stats & Dashboard Overview Widgets
+    async function loadStats() {
+        try {
+            const res = await fetch('/api/stats');
+            const data = await res.json();
+
+            statTotal.textContent = data.total_agencies || 0;
+            statPhones.textContent = data.total_phones || 0;
+            badgeAgenciesCount.textContent = data.total_agencies || 0;
+
+            const respondedCount = data.status_distribution?.RESPONDED || 0;
+            const sentCount = data.status_distribution?.SENT || 0;
+
+            statResponded.textContent = respondedCount;
+            statSent.textContent = sentCount;
+
+            // Populate City Select Options
+            filterCitySelect.innerHTML = '<option value="">Tüm Şehirler</option>';
+            if (data.top_cities) {
+                dashboardCitiesList.innerHTML = '';
+                Object.entries(data.top_cities).forEach(([city, count]) => {
+                    if (city) {
+                        const opt = document.createElement('option');
+                        opt.value = city;
+                        opt.textContent = `${city} (${count})`;
+                        filterCitySelect.appendChild(opt);
+
+                        const row = document.createElement('div');
+                        row.style.cssText = 'display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem;';
+                        row.innerHTML = `<span>${city}</span> <strong style="color: var(--accent-indigo);">${count} Acente</strong>`;
+                        dashboardCitiesList.appendChild(row);
+                    }
+                });
+            }
+
+            // Load Recent Responded Agencies Widget
+            const agRes = await fetch('/api/agencies?status=RESPONDED');
+            const respondedAgencies = await agRes.json();
+
+            dashboardRecentAgencies.innerHTML = '';
+            if (respondedAgencies && respondedAgencies.length > 0) {
+                respondedAgencies.forEach(a => {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);';
+                    div.innerHTML = `
+                        <div>
+                            <strong style="color: var(--text-primary);">${a.name}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">${a.city || 'Şehir Belirtilmemiş'} &bull; ${a.emails.join(', ') || a.phones.join(', ')}</div>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="openAgencyModal(${a.id})"><i class="fa-solid fa-clock-rotate-left"></i> Zaman Çizelgesi</button>
+                    `;
+                    dashboardRecentAgencies.appendChild(div);
+                });
+            } else {
+                dashboardRecentAgencies.innerHTML = '<p style="color: var(--text-muted);">Henüz yanıt veren acente bulunmuyor.</p>';
+            }
+
+        } catch (err) {
+            console.error('Stats yükleme hatası:', err);
+        }
+    }
+
+    // 2. Fetch & Render Agencies Table
+    async function loadAgencies() {
+        loadingSpinner.style.display = 'block';
+        tbodyAgencies.innerHTML = '';
+
+        try {
+            const params = new URLSearchParams();
+            if (currentFilterCity) params.append('city', currentFilterCity);
+            if (currentFilterStatus) params.append('status', currentFilterStatus);
+            if (currentFilterSource) params.append('source', currentFilterSource);
+            if (currentFilterHasPhone) params.append('has_phone', currentFilterHasPhone);
+            if (currentFilterHasEmail) params.append('has_email', currentFilterHasEmail);
+            if (currentSearchQuery) params.append('q', currentSearchQuery);
+
+            const res = await fetch(`/api/agencies?${params.toString()}`);
+            const agencies = await res.json();
+
+            loadingSpinner.style.display = 'none';
+
+            if (!agencies || agencies.length === 0) {
+                tbodyAgencies.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            <i class="fa-solid fa-folder-open"></i> Arama kriterlerine uygun acente bulunamadı.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            agencies.forEach(agency => {
+                const tr = document.createElement('tr');
+                
+                let statusClass = 'tag-new';
+                if (agency.status === 'SENT') statusClass = 'tag-sent';
+                if (agency.status === 'RESPONDED') statusClass = 'tag-responded';
+                if (agency.status === 'CONTACTED') statusClass = 'tag-contacted';
+                if (agency.status === 'FAILED') statusClass = 'tag-failed';
+
+                let sourceBadges = '';
+                if (agency.sources && agency.sources.includes('companywall')) {
+                    sourceBadges += `<span class="badge-source source-companywall"><i class="fa-solid fa-building-circle-check"></i> CompanyWall</span>`;
+                }
+                if (agency.sources && agency.sources.includes('indomio')) {
+                    sourceBadges += `<span class="badge-source source-indomio"><i class="fa-solid fa-gem"></i> Indomio</span>`;
+                }
+                if (agency.sources && agency.sources.includes('nekretnine')) {
+                    sourceBadges += `<span class="badge-source source-nekretnine"><i class="fa-solid fa-house"></i> Nekretnine</span>`;
+                }
+
+                const pibMbInfo = (agency.pib || agency.mb) 
+                    ? `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal; margin-top: 2px;">
+                         ${agency.pib ? 'PIB: ' + agency.pib : ''} ${agency.mb ? ' | MB: ' + agency.mb : ''}
+                       </div>` 
+                    : '';
+
+                const phonesStr = agency.phones && agency.phones.length > 0 
+                    ? agency.phones.join(', ') 
+                    : '<span style="color: var(--text-muted);">-</span>';
+
+                const emailsStr = agency.emails && agency.emails.length > 0 
+                    ? agency.emails.join(', ') 
+                    : '<span style="color: var(--text-muted);">-</span>';
+
+                tr.innerHTML = `
+                    <td><strong>#${agency.id}</strong></td>
+                    <td class="agency-name-cell">
+                        <div>
+                            <div>${sourceBadges}<strong>${agency.name}</strong></div>
+                            ${pibMbInfo}
+                        </div>
+                    </td>
+                    <td>${agency.city || '-'}</td>
+                    <td><span class="status-tag ${statusClass}">${agency.status}</span></td>
+                    <td>${phonesStr}</td>
+                    <td>${emailsStr}</td>
+                    <td><span class="code-tag">${agency.ref_code}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary btn-view-detail" data-id="${agency.id}">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Detay
+                        </button>
+                    </td>
+                `;
+
+                tbodyAgencies.appendChild(tr);
+            });
+
+            document.querySelectorAll('.btn-view-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    window.openAgencyModal(id);
+                });
+            });
+
+        } catch (err) {
+            loadingSpinner.style.display = 'none';
+            console.error('Acente listesi yüklenirken hata:', err);
+        }
+    }
+
+    // 3. Open Agency Detail Modal with Timeline
+    window.openAgencyModal = async function(agencyId) {
+        selectedAgencyId = agencyId;
+        agencyModal.classList.add('active');
+
+        const modalTitle = document.getElementById('modal-agency-name');
+        const modalStatus = document.getElementById('modal-agency-status');
+        const modalAddress = document.getElementById('modal-agency-address');
+        const modalPhones = document.getElementById('modal-agency-phones');
+        const modalEmails = document.getElementById('modal-agency-emails');
+        const modalWebsites = document.getElementById('modal-agency-websites');
+        const modalRefCode = document.getElementById('modal-agency-refcode');
+        const modalTimeline = document.getElementById('modal-timeline');
+
+        modalTimeline.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Yükleniyor...</p>';
+
+        try {
+            const res = await fetch(`/api/agencies/${agencyId}`);
+            const agency = await res.json();
+
+            modalTitle.textContent = agency.name;
+            modalStatus.textContent = agency.status;
+            modalStatus.className = `status-tag tag-${agency.status.toLowerCase()}`;
+            modalAddress.textContent = `${agency.city ? agency.city + ' / ' : ''}${agency.address || 'Adres bilgisi yok'}`;
+            
+            modalPhones.textContent = agency.phones && agency.phones.length > 0 ? agency.phones.join(', ') : 'Belirtilmedi';
+            if (agency.emails && agency.emails.length > 0) {
+                modalEmails.innerHTML = agency.emails.map(e => {
+                    const addr = typeof e === 'object' ? e.email : e;
+                    const isInactive = typeof e === 'object' && e.status === 'INACTIVE';
+                    return isInactive 
+                        ? `<span class="email-inactive" title="E-posta teslim edilemedi / Pasif"><i class="fa-solid fa-triangle-exclamation"></i> ${addr} (Geri Döndü)</span>`
+                        : addr;
+                }).join('<br>');
+            } else {
+                modalEmails.textContent = 'Belirtilmedi';
+            }
+            
+            if (agency.websites && agency.websites.length > 0) {
+                modalWebsites.innerHTML = agency.websites.map(w => `<a href="${w.url}" target="_blank" style="color: var(--accent-indigo);">${w.url}</a>`).join('<br>');
+            } else {
+                modalWebsites.textContent = 'Belirtilmedi';
+            }
+
+            modalRefCode.textContent = agency.ref_code;
+
+            modalTimeline.innerHTML = '';
+            if (!agency.communications || agency.communications.length === 0) {
+                modalTimeline.innerHTML = '<p style="color: var(--text-muted); padding: 1rem 0;">Henüz kaydedilmiş iletişim yok.</p>';
+            } else {
+                agency.communications.forEach(comm => {
+                    const item = document.createElement('div');
+                    const isReceived = comm.status === 'RECEIVED' || comm.status === 'RESPONDED';
+                    const isFailed = comm.status === 'FAILED';
+                    
+                    item.className = `timeline-item ${isReceived ? 'received' : ''} ${isFailed ? 'failed' : ''}`;
+
+                    const formattedDate = new Date(comm.date).toLocaleString('tr-TR', {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    const statusBadge = isFailed 
+                        ? `<span class="status-tag tag-failed" style="margin-left: 6px;"><i class="fa-solid fa-circle-exclamation"></i> TESLİMAT HATASI</span>`
+                        : '';
+
+                    item.innerHTML = `
+                        <div class="timeline-meta">
+                            <span><i class="fa-solid fa-paper-plane"></i> ${comm.sender} &rarr; ${comm.recipient} ${statusBadge}</span>
+                            <span><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
+                        </div>
+                        <div class="timeline-body">${comm.message}</div>
+                    `;
+                    modalTimeline.appendChild(item);
+                });
+            }
+
+        } catch (err) {
+            console.error('Modal acente detay yükleme hatası:', err);
+        }
+    };
+
+    modalCloseBtn.addEventListener('click', () => agencyModal.classList.remove('active'));
+
+    document.getElementById('btn-copy-ref').addEventListener('click', () => {
+        const code = document.getElementById('modal-agency-refcode').textContent;
+        navigator.clipboard.writeText(code);
+        alert(`Referans Kodu Kopyalandı: ${code}`);
+    });
+
+    // 4. İletişim Akışı (Feed View)
+    async function loadCommunicationsFeed() {
+        commsFeedList.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Akış yükleniyor...</p>';
+        const channel = filterCommChannel ? filterCommChannel.value : '';
+
+        try {
+            const res = await fetch(`/api/communications?channel=${channel}`);
+            const comms = await res.json();
+
+            commsFeedList.innerHTML = '';
+            if (!comms || comms.length === 0) {
+                commsFeedList.innerHTML = '<p style="color: var(--text-muted); padding: 2rem; text-align: center;">İletişim kaydı bulunamadı.</p>';
+                return;
+            }
+
+            comms.forEach(comm => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;';
+                
+                const formattedDate = new Date(comm.date).toLocaleString('tr-TR', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <div>
+                            <strong style="color: var(--text-primary); font-size: 1rem;">${comm.agency_name}</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">(${comm.agency_city || 'Şehir Yok'})</span>
+                        </div>
+                        <span class="status-tag tag-${comm.status.toLowerCase()}">${comm.status}</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                        <span><i class="fa-solid fa-user"></i> ${comm.sender} &rarr; ${comm.recipient}</span>
+                        <span style="margin-left: 1rem;"><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>
+                `;
+                commsFeedList.appendChild(card);
+            });
+
+        } catch (err) {
+            console.error('İletişim akışı yükleme hatası:', err);
+        }
+    }
+
+    if (filterCommChannel) {
+        filterCommChannel.addEventListener('change', loadCommunicationsFeed);
+    }
+
+    // 5. Referans Sistemi Overview
+    async function loadReferralsOverview() {
+        referralsTbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Yükleniyor...</td></tr>';
+        try {
+            const res = await fetch('/api/referrals');
+            const data = await res.json();
+
+            referralsTbody.innerHTML = '';
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                const refLink = `https://stanomer.com/ref/${item.ref_code}`;
+                tr.innerHTML = `
+                    <td><strong>#${item.id}</strong></td>
+                    <td><strong>${item.name}</strong></td>
+                    <td>${item.city || '-'}</td>
+                    <td><span class="code-tag">${item.ref_code}</span></td>
+                    <td><a href="${refLink}" target="_blank" style="color: var(--accent-indigo); font-size: 0.85rem;">${refLink}</a></td>
+                    <td><span class="badge" style="background: var(--accent-emerald);">${item.referral_count} Davet</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="navigator.clipboard.writeText('${refLink}'); alert('Referans Linki Kopyalandı!');">
+                            <i class="fa-regular fa-copy"></i> Linki Kopyala
+                        </button>
+                    </td>
+                `;
+                referralsTbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error('Referans yükleme hatası:', err);
+        }
+    }
+
+    // Filter & Search Listeners
+    filterCitySelect.addEventListener('change', (e) => {
+        currentFilterCity = e.target.value;
+        loadAgencies();
+    });
+
+    const filterSourceSelect = document.getElementById('filter-source');
+    if (filterSourceSelect) {
+        filterSourceSelect.addEventListener('change', (e) => {
+            currentFilterSource = e.target.value;
+            loadAgencies();
+        });
+    }
+
+    statusPills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+            statusPills.forEach(p => p.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentFilterStatus = e.currentTarget.getAttribute('data-status');
+            loadAgencies();
+        });
+    });
+
+    const filterHasPhoneSelect = document.getElementById('filter-has-phone');
+    if (filterHasPhoneSelect) {
+        filterHasPhoneSelect.addEventListener('change', (e) => {
+            currentFilterHasPhone = e.target.value;
+            loadAgencies();
+        });
+    }
+
+    const filterHasEmailSelect = document.getElementById('filter-has-email');
+    if (filterHasEmailSelect) {
+        filterHasEmailSelect.addEventListener('change', (e) => {
+            currentFilterHasEmail = e.target.value;
+            loadAgencies();
+        });
+    }
+
+    let searchTimeout = null;
+    globalSearchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            currentSearchQuery = e.target.value;
+            const currentTab = document.querySelector('.tab-view.active')?.id;
+            if (currentTab !== 'view-agencies') {
+                switchToTab('view-agencies');
+            } else {
+                loadAgencies();
+            }
+        }, 300);
+    });
+
+    // Quick Add Modal Form Listener
+    async function populateAgencyDropdown() {
+        try {
+            const res = await fetch('/api/agencies');
+            const agencies = await res.json();
+            commAgencySelect.innerHTML = '<option value="">Acente Seçiniz...</option>';
+            agencies.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.id;
+                opt.textContent = `${a.name} (${a.city || 'Şehir Yok'})`;
+                commAgencySelect.appendChild(opt);
+            });
+        } catch (err) {
+            console.error('Dropdown doldurma hatası:', err);
+        }
+    }
+
+    btnQuickAdd.addEventListener('click', () => {
+        populateAgencyDropdown();
+        addCommModal.classList.add('active');
+    });
+
+    btnAddCommModal.addEventListener('click', () => {
+        populateAgencyDropdown();
+        if (selectedAgencyId) {
+            commAgencySelect.value = selectedAgencyId;
+        }
+        addCommModal.classList.add('active');
+    });
+
+    addCommCloseBtn.addEventListener('click', () => addCommModal.classList.remove('active'));
+    addCommCancelBtn.addEventListener('click', () => addCommModal.classList.remove('active'));
+
+    addCommForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const agencyId = commAgencySelect.value;
+        const channel = document.getElementById('comm-channel').value;
+        const status = document.getElementById('comm-status').value;
+        const sender = document.getElementById('comm-sender').value;
+        const message = document.getElementById('comm-message').value;
+
+        if (!agencyId || !message) return;
+
+        try {
+            const res = await fetch(`/api/agencies/${agencyId}/communications`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sender, message, channel, status })
+            });
+
+            if (res.ok) {
+                addCommModal.classList.remove('active');
+                addCommForm.reset();
+                loadStats();
+                loadAgencies();
+                if (agencyModal.classList.contains('active')) {
+                    openAgencyModal(agencyId);
+                }
+            } else {
+                alert('İletişim kaydı eklenirken hata oluştu.');
+            }
+        } catch (err) {
+            console.error('İletişim ekleme hatası:', err);
+        }
+    });
+
+    // Initial Load
+    loadStats();
+    loadAgencies();
+});

@@ -1,0 +1,12 @@
+.venv/
+.browser_profile/
+__pycache__/
+*.pyc
+.DS_Store
+venv/
+.env
+.tempmediaStorage/
+scratch/
+*.log
+*.txt
+!requirements.txt

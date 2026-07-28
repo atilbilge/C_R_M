@@ -1,0 +1,1882 @@
+{
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3439/": {
+    "agency_name": "CENZAR",
+    "sent_at": "2026-07-24T17:27:24.771000",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4033/": {
+    "agency_name": "Kvadrat 024",
+    "sent_at": "2026-07-24T17:32:59.075000",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1123/": {
+    "agency_name": "UNITED CITY GROUP",
+    "sent_at": "2026-07-24T17:40:00.000000",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/241/": {
+    "agency_name": "ART NEKRETNINE",
+    "sent_at": "2026-07-24T17:41:00.000000",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/307/": {
+    "agency_name": "BEOCITY NEKRETNINE",
+    "sent_at": "2026-07-24T17:42:00.000000",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/427/": {
+    "agency_name": "CB NEKRETNINE",
+    "sent_at": "2026-07-24T17:49:57.287258",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3389/": {
+    "agency_name": "IM TOPOLA",
+    "sent_at": "2026-07-24T17:50:16.369143",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4761/": {
+    "agency_name": "MAŠA NEKRETNINE",
+    "sent_at": "2026-07-24T17:50:46.672054",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/563/": {
+    "agency_name": "NS-GROUP NEKRETNINE",
+    "sent_at": "2026-07-24T18:08:11.867348",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/229/": {
+    "agency_name": "N-NEKRETNINE",
+    "sent_at": "2026-07-24T18:08:29.733719",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3179/": {
+    "agency_name": "Real estate agency Gold nekretnine Novi Sad",
+    "sent_at": "2026-07-24T18:08:44.250277",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1695/": {
+    "agency_name": "KLJUČ 3112 NEKRETNINE",
+    "sent_at": "2026-07-24T18:09:20.243158",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4305/": {
+    "agency_name": "NekretnineXpert",
+    "sent_at": "2026-07-24T18:09:33.047567",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1545/": {
+    "agency_name": "VINSON NEKRETNINE",
+    "sent_at": "2026-07-24T18:09:57.485247",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2469/": {
+    "agency_name": "ŠĆEPANOVIĆ I SARADNICI",
+    "sent_at": "2026-07-24T18:10:14.890173",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/425/": {
+    "agency_name": "FAMILY NEKRETNINE",
+    "sent_at": "2026-07-24T18:10:28.830689",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/641/": {
+    "agency_name": "BOMBYX",
+    "sent_at": "2026-07-24T18:10:46.881500",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4311/": {
+    "agency_name": "ELIT real estate",
+    "sent_at": "2026-07-24T18:11:02.680453",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1065/": {
+    "agency_name": "LAV 2020 NEKRETNINE",
+    "sent_at": "2026-07-24T18:11:14.793883",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3401/": {
+    "agency_name": "MASTER 021 NEKRETNINE",
+    "sent_at": "2026-07-24T18:11:29.200293",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/455/": {
+    "agency_name": "MEGATRANS NEKRETNINE",
+    "sent_at": "2026-07-24T18:11:41.758648",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/569/": {
+    "agency_name": "BIARH",
+    "sent_at": "2026-07-24T18:11:54.928793",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1701/": {
+    "agency_name": "JANA KONSALTING 021",
+    "sent_at": "2026-07-24T18:12:08.012517",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/543/": {
+    "agency_name": "M2 KVADRAT NEKRETNINE",
+    "sent_at": "2026-07-24T18:12:20.776501",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1115/": {
+    "agency_name": "IMPERIAL NEKRETNINE NOVI SAD",
+    "sent_at": "2026-07-24T18:12:41.445586",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3441/": {
+    "agency_name": "SNEŽANA TRIO NEKRETNINE",
+    "sent_at": "2026-07-24T18:13:02.698313",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3309/": {
+    "agency_name": "JORDAN ENERGY - OGRANAK FREEDOM NEKRETNINE",
+    "sent_at": "2026-07-24T18:13:22.697123",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/193/": {
+    "agency_name": "SLAVIJACOOP",
+    "sent_at": "2026-07-24T18:13:44.060461",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3411/": {
+    "agency_name": "CFU INVEST",
+    "sent_at": "2026-07-24T18:13:57.942089",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/769/": {
+    "agency_name": "DVOR NEKRETNINE AK-87",
+    "sent_at": "2026-07-24T18:14:11.954079",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/437/": {
+    "agency_name": "AURORA 369",
+    "sent_at": "2026-07-24T18:14:26.357456",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4767/": {
+    "agency_name": "REGIS 0208 NEKRETNINE",
+    "sent_at": "2026-07-24T18:14:39.208662",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1147/": {
+    "agency_name": "TRIANON 021",
+    "sent_at": "2026-07-24T18:14:51.906432",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/431/": {
+    "agency_name": "DAMA GRADNJA",
+    "sent_at": "2026-07-24T18:15:04.686899",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4747/": {
+    "agency_name": "APEX REAL ESTATE",
+    "sent_at": "2026-07-24T18:15:21.007836",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2919/": {
+    "agency_name": "EVROPA NS",
+    "sent_at": "2026-07-24T18:15:32.785786",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2521/": {
+    "agency_name": "KUC KUC",
+    "sent_at": "2026-07-24T18:15:44.939480",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/39/": {
+    "agency_name": "MAT REAL ESTATE",
+    "sent_at": "2026-07-24T18:16:17.116380",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1069/": {
+    "agency_name": "WOBY HAUS",
+    "sent_at": "2026-07-24T18:16:53.924941",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3863/": {
+    "agency_name": "MAKSIMA NEKRETNINE",
+    "sent_at": "2026-07-24T18:17:11.135077",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4487/": {
+    "agency_name": "PANONIJA NEKRETNINE",
+    "sent_at": "2026-07-24T18:17:24.916793",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4853/": {
+    "agency_name": "MACRO INVEST DOO",
+    "sent_at": "2026-07-24T18:17:38.484629",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/33/": {
+    "agency_name": "BOŽJAK NEKRETNINE",
+    "sent_at": "2026-07-24T18:21:53.875332",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/581/": {
+    "agency_name": "STEFANOV NEKRETNINE",
+    "sent_at": "2026-07-24T18:22:05.956220",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3417/": {
+    "agency_name": "STUDIO SOKOLOV",
+    "sent_at": "2026-07-24T18:22:17.178543",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3935/": {
+    "agency_name": "Real Estate Bulevar",
+    "sent_at": "2026-07-24T18:23:53.995170",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/451/": {
+    "agency_name": "EXPERT NEKRETNINE",
+    "sent_at": "2026-07-24T18:24:30.865107",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/645/": {
+    "agency_name": "PROAGENT REAL",
+    "sent_at": "2026-07-24T18:24:46.711346",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1299/": {
+    "agency_name": "KUĆA PETROVIĆ DOO",
+    "sent_at": "2026-07-24T18:25:03.924952",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1067/": {
+    "agency_name": "PROPERA NEKRETNINE",
+    "sent_at": "2026-07-24T18:25:15.191520",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4303/": {
+    "agency_name": "STAN NA KVADRAT NIŠ",
+    "sent_at": "2026-07-24T18:25:25.523473",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/993/": {
+    "agency_name": "PERMETI NEKRETNINE",
+    "sent_at": "2026-07-24T18:25:46.192206",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3469/": {
+    "agency_name": "DISTRIKT NEKRETNINE",
+    "sent_at": "2026-07-24T18:25:57.805264",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/197/": {
+    "agency_name": "MONDO NEKRETNINE",
+    "sent_at": "2026-07-24T18:26:11.080462",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/787/": {
+    "agency_name": "DONA E",
+    "sent_at": "2026-07-24T18:26:26.421051",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/331/": {
+    "agency_name": "BM PLUS NEKRETNINE",
+    "sent_at": "2026-07-24T18:26:39.356874",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/537/": {
+    "agency_name": "TANDEM NEKRETNINE",
+    "sent_at": "2026-07-24T18:26:55.882838",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3457/": {
+    "agency_name": "EDIT 018",
+    "sent_at": "2026-07-24T18:27:08.287372",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/687/": {
+    "agency_name": "KITIĆ",
+    "sent_at": "2026-07-24T18:27:19.999963",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/987/": {
+    "agency_name": "DELTA NEKRETNINE",
+    "sent_at": "2026-07-24T18:27:34.071877",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1139/": {
+    "agency_name": "DTS NEKRETNINE",
+    "sent_at": "2026-07-24T18:27:51.305354",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/297/": {
+    "agency_name": "RESPEKT NEKRETNINE",
+    "sent_at": "2026-07-24T18:28:03.831212",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4381/": {
+    "agency_name": "GIGANT LUX",
+    "sent_at": "2026-07-24T18:28:14.781088",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1079/": {
+    "agency_name": "KVART NEKRETNINE",
+    "sent_at": "2026-07-24T18:28:26.950677",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1089/": {
+    "agency_name": "INVESTITOR FILIPOVIĆ",
+    "sent_at": "2026-07-24T18:28:39.317100",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/11/": {
+    "agency_name": "KODEKS NIŠ",
+    "sent_at": "2026-07-24T18:28:53.870342",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/683/": {
+    "agency_name": "OLYMP",
+    "sent_at": "2026-07-24T18:29:12.848166",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/253/": {
+    "agency_name": "ZNAMEN KAPITAL",
+    "sent_at": "2026-07-24T18:29:25.967819",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/335/": {
+    "agency_name": "DAMBO-dom izuzetnih nekretnina",
+    "sent_at": "2026-07-24T18:29:40.317522",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/735/": {
+    "agency_name": "IRMA NEKRETNINE",
+    "sent_at": "2026-07-24T18:29:53.565732",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1329/": {
+    "agency_name": "BLAŽIĆ NEKRETNINE",
+    "sent_at": "2026-07-24T18:30:07.200425",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4871/": {
+    "agency_name": "TRIPLE CROWN DOO",
+    "sent_at": "2026-07-24T18:30:20.945188",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1211/": {
+    "agency_name": "LEGRO",
+    "sent_at": "2026-07-24T18:30:37.566024",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1603/": {
+    "agency_name": "GIMMEL NEKRETNINE",
+    "sent_at": "2026-07-24T18:30:54.383136",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/337/": {
+    "agency_name": "FAST PROJEKT",
+    "sent_at": "2026-07-24T18:44:01.337622",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3757/": {
+    "agency_name": "TAKOVO",
+    "sent_at": "2026-07-24T18:44:14.718954",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4079/": {
+    "agency_name": "YUMILAND",
+    "sent_at": "2026-07-24T18:44:31.883719",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1559/": {
+    "agency_name": "MAX MAGNUS INVEST",
+    "sent_at": "2026-07-24T18:46:28.499238",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/551/": {
+    "agency_name": "FINA NEKRETNINE REAL ESTATE AGENCY",
+    "sent_at": "2026-07-24T18:46:41.360389",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/165/": {
+    "agency_name": "JAVOR NEKRETNINE",
+    "sent_at": "2026-07-24T18:46:54.034670",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/989/": {
+    "agency_name": "MONTE CASA",
+    "sent_at": "2026-07-24T18:47:05.951480",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/247/": {
+    "agency_name": "TP PALISAD",
+    "sent_at": "2026-07-24T18:47:18.929990",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/31/": {
+    "agency_name": "BONA FIDES NEKRETNINE NOVA",
+    "sent_at": "2026-07-24T18:47:56.033475",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/753/": {
+    "agency_name": "RADANOVIĆ NEKRETNINE",
+    "sent_at": "2026-07-24T18:48:54.441308",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/797/": {
+    "agency_name": "CAPITAL LUX",
+    "sent_at": "2026-07-24T18:49:05.110242",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/869/": {
+    "agency_name": "FILIPOVIĆ INVEST GRADNJA",
+    "sent_at": "2026-07-24T18:49:16.112210",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1087/": {
+    "agency_name": "GRADEKS",
+    "sent_at": "2026-07-24T18:49:26.957250",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2119/": {
+    "agency_name": "LIBERO",
+    "sent_at": "2026-07-24T18:49:39.677684",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/817/": {
+    "agency_name": "MABO INVEST",
+    "sent_at": "2026-07-24T18:49:51.326621",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/629/": {
+    "agency_name": "ĐUKIĆ",
+    "sent_at": "2026-07-24T18:50:02.628077",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/23/": {
+    "agency_name": "HARMONY 022",
+    "sent_at": "2026-07-24T18:51:55.278072",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/315/": {
+    "agency_name": "BEDEM NEKRETNINE",
+    "sent_at": "2026-07-24T18:52:13.099030",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1213/": {
+    "agency_name": "SONYA NEKRETNINE",
+    "sent_at": "2026-07-24T18:52:30.992332",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1085/": {
+    "agency_name": "KONSALTING",
+    "sent_at": "2026-07-24T18:52:38.454369",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3391/": {
+    "agency_name": "KATANI",
+    "sent_at": "2026-07-24T18:52:53.039209",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/809/": {
+    "agency_name": "RU STATUS NEKRETNINE",
+    "sent_at": "2026-07-24T18:53:03.824126",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3413/": {
+    "agency_name": "NEKRETNINE MALIĆ",
+    "sent_at": "2026-07-24T18:53:19.385476",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3473/": {
+    "agency_name": "MINJON GRADNJA DOO",
+    "sent_at": "2026-07-24T18:53:30.287423",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4755/": {
+    "agency_name": "NEKRETNINE MANHATTAN",
+    "sent_at": "2026-07-24T18:53:41.856029",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2265/": {
+    "agency_name": "GEOBERZA",
+    "sent_at": "2026-07-24T18:53:55.304899",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4883/": {
+    "agency_name": "Immobiliare.it-test",
+    "sent_at": "2026-07-24T18:54:07.372485",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/623/": {
+    "agency_name": "EURORENT",
+    "sent_at": "2026-07-26T11:44:55.653297",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/579/": {
+    "agency_name": "EUROPOLIS REAL ESTATE",
+    "sent_at": "2026-07-26T11:45:14.149367",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/341/": {
+    "agency_name": "BELI GRAD NEKRETNINE",
+    "sent_at": "2026-07-26T11:45:26.678195",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1049/": {
+    "agency_name": "MOJ KVADRAT",
+    "sent_at": "2026-07-26T11:45:40.799336",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3427/": {
+    "agency_name": "LEVERAGE NEKRETNINE",
+    "sent_at": "2026-07-26T11:45:48.331482",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/417/": {
+    "agency_name": "AS NEKRETNINE PRO",
+    "sent_at": "2026-07-26T11:46:00.015439",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/561/": {
+    "agency_name": "DIVIS NEKRETNINE",
+    "sent_at": "2026-07-26T11:46:12.066290",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/199/": {
+    "agency_name": "GIGANT NEKRETNINE",
+    "sent_at": "2026-07-26T11:46:23.111607",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1095/": {
+    "agency_name": "ETAGI COM",
+    "sent_at": "2026-07-26T11:46:34.982233",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/53/": {
+    "agency_name": "KW CVETKOVIĆ ROŠKOV",
+    "sent_at": "2026-07-26T11:46:45.230402",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1015/": {
+    "agency_name": "MEGASTAN",
+    "sent_at": "2026-07-26T11:46:58.462116",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2323/": {
+    "agency_name": "NEKRETNINE GAVRILOVIĆ DOO",
+    "sent_at": "2026-07-26T11:47:05.855013",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1029/": {
+    "agency_name": "KUĆA I STAN",
+    "sent_at": "2026-07-26T11:47:13.747607",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4091/": {
+    "agency_name": "Standard",
+    "sent_at": "2026-07-26T11:47:20.663809",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/155/": {
+    "agency_name": "ZIDART",
+    "sent_at": "2026-07-26T11:47:33.882470",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/783/": {
+    "agency_name": "ATAŠE NEKRETNINE",
+    "sent_at": "2026-07-26T11:47:46.477397",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/55/": {
+    "agency_name": "BEBA REAL ESTATE",
+    "sent_at": "2026-07-26T11:47:53.378908",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/685/": {
+    "agency_name": "ALFA SISTEM NEKRETNINE",
+    "sent_at": "2026-07-26T11:48:04.482410",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4051/": {
+    "agency_name": "Magnat",
+    "sent_at": "2026-07-26T11:48:12.060585",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/957/": {
+    "agency_name": "BEOAGENT",
+    "sent_at": "2026-07-26T11:48:23.589703",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/765/": {
+    "agency_name": "KOSMOPOLIT NEKRETNINE",
+    "sent_at": "2026-07-26T11:48:34.331686",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/539/": {
+    "agency_name": "AGENCIJA NEKRETNINE OBRADOVIĆ",
+    "sent_at": "2026-07-26T11:48:48.255632",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/283/": {
+    "agency_name": "SQUARE BG NEKRETNINE",
+    "sent_at": "2026-07-26T11:49:03.006279",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/185/": {
+    "agency_name": "NEKRETNINE IKAT",
+    "sent_at": "2026-07-26T11:49:15.634056",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/985/": {
+    "agency_name": "FAVORIT",
+    "sent_at": "2026-07-26T11:49:30.535001",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/745/": {
+    "agency_name": "KEY REAL ESTATE",
+    "sent_at": "2026-07-26T11:49:44.357116",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/955/": {
+    "agency_name": "BEOSTIL NEKRETNINE-STILIKO",
+    "sent_at": "2026-07-26T11:49:55.613587",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/607/": {
+    "agency_name": "VREMEPLOV",
+    "sent_at": "2026-07-26T11:50:06.483935",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3289/": {
+    "agency_name": "TEOFIL NEKRETNINE",
+    "sent_at": "2026-07-26T11:50:19.131891",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/205/": {
+    "agency_name": "BG HOME REAL ESTATE",
+    "sent_at": "2026-07-26T11:50:30.567039",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/277/": {
+    "agency_name": "BENEFIT NEKRETNINE",
+    "sent_at": "2026-07-26T11:50:40.399301",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/717/": {
+    "agency_name": "PROPERTY BROKER",
+    "sent_at": "2026-07-26T11:50:52.182501",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1101/": {
+    "agency_name": "BOROVIĆ NEKRETNINE",
+    "sent_at": "2026-07-26T11:51:05.166295",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1007/": {
+    "agency_name": "STUB NEKRETNINE",
+    "sent_at": "2026-07-26T11:51:12.243163",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/707/": {
+    "agency_name": "BILDING NEKRETNINE",
+    "sent_at": "2026-07-26T11:51:23.082271",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/609/": {
+    "agency_name": "GALERIJA NEKRETNINE",
+    "sent_at": "2026-07-26T11:51:35.266186",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/57/": {
+    "agency_name": "GLIGORIĆ NEKRETNINE",
+    "sent_at": "2026-07-26T11:51:46.144871",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/837/": {
+    "agency_name": "SONATA PROPERTIES",
+    "sent_at": "2026-07-26T11:51:58.415752",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1153/": {
+    "agency_name": "LAV NEKRETNINE",
+    "sent_at": "2026-07-26T11:52:13.449151",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/227/": {
+    "agency_name": "FENIKS SISTEM",
+    "sent_at": "2026-07-26T11:52:24.298920",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/715/": {
+    "agency_name": "NOVI KVADRATI",
+    "sent_at": "2026-07-26T11:52:35.649704",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/17/": {
+    "agency_name": "OPTIMIST NEKRETNINE",
+    "sent_at": "2026-07-26T11:52:42.987718",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4387/": {
+    "agency_name": "BG Posrednik",
+    "sent_at": "2026-07-26T11:52:54.716173",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3481/": {
+    "agency_name": "DIKA REAL ESTATE",
+    "sent_at": "2026-07-26T11:53:06.461387",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3685/": {
+    "agency_name": "MENADŽER STAN",
+    "sent_at": "2026-07-26T11:53:17.249007",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/237/": {
+    "agency_name": "FORMA TIM",
+    "sent_at": "2026-07-26T11:53:24.429804",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1711/": {
+    "agency_name": "SKY 88 REALESTATE",
+    "sent_at": "2026-07-26T11:53:37.028533",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1075/": {
+    "agency_name": "PRELIĆ INVEST",
+    "sent_at": "2026-07-26T11:53:48.106023",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/621/": {
+    "agency_name": "ELEGANT NEKRETNINE",
+    "sent_at": "2026-07-26T11:54:03.765293",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1035/": {
+    "agency_name": "PREMIUM REAL ESTATE",
+    "sent_at": "2026-07-26T11:54:16.862628",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1083/": {
+    "agency_name": "ASTRA NOWA",
+    "sent_at": "2026-07-26T11:54:35.979648",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1057/": {
+    "agency_name": "BRIAN LACK AND COMPANY",
+    "sent_at": "2026-07-26T11:54:48.379387",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4791/": {
+    "agency_name": "Lambrin nekretnine",
+    "sent_at": "2026-07-26T11:55:06.531257",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1117/": {
+    "agency_name": "GRAD NEKRETNINE",
+    "sent_at": "2026-07-26T11:55:18.990074",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/63/": {
+    "agency_name": "ATRIUM PROPERTY SERVICES",
+    "sent_at": "2026-07-26T11:55:32.365156",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1135/": {
+    "agency_name": "DANOS AND ASSOCIATES",
+    "sent_at": "2026-07-26T11:55:44.845223",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/613/": {
+    "agency_name": "GAMA PROPERTY Beograd",
+    "sent_at": "2026-07-26T11:55:52.082786",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/383/": {
+    "agency_name": "KREDIUM",
+    "sent_at": "2026-07-26T11:56:04.047857",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/345/": {
+    "agency_name": "KADENA SOTHEBY'S INTERNATIONAL REALTY",
+    "sent_at": "2026-07-26T11:56:15.664004",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1021/": {
+    "agency_name": "ECONOMIC NET SYSTEM",
+    "sent_at": "2026-07-26T11:56:27.211308",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/347/": {
+    "agency_name": "JD PROPERTIES AND CONSULTING DOO",
+    "sent_at": "2026-07-26T11:56:37.442732",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/975/": {
+    "agency_name": "GOXY",
+    "sent_at": "2026-07-26T11:56:45.113805",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1125/": {
+    "agency_name": "JARIĆ NEKRETNINE",
+    "sent_at": "2026-07-26T11:56:56.642623",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1109/": {
+    "agency_name": "BEO STREET NEKRETNINE",
+    "sent_at": "2026-07-26T11:57:10.212065",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1103/": {
+    "agency_name": "CONCEPT REAL ESTATE",
+    "sent_at": "2026-07-26T11:57:23.613854",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/807/": {
+    "agency_name": "LIBERO 011",
+    "sent_at": "2026-07-26T11:57:34.579128",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1051/": {
+    "agency_name": "PRUDENS NEKRETNINE",
+    "sent_at": "2026-07-26T11:57:46.615101",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/949/": {
+    "agency_name": "MILENIJUM NEKRETNINE",
+    "sent_at": "2026-07-26T11:57:58.098785",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/159/": {
+    "agency_name": "EXTRA HOME",
+    "sent_at": "2026-07-26T11:58:09.332711",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/379/": {
+    "agency_name": "MAKI NEKRETNINE",
+    "sent_at": "2026-07-26T11:58:25.064466",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3407/": {
+    "agency_name": "MANERA",
+    "sent_at": "2026-07-26T11:58:31.785419",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/731/": {
+    "agency_name": "ERMITAŽ NEKRETNINE",
+    "sent_at": "2026-07-26T11:58:39.598869",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3409/": {
+    "agency_name": "DIL NEKRETNINE",
+    "sent_at": "2026-07-26T11:58:51.010027",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/317/": {
+    "agency_name": "MONA NEKRETNINE BEOGRAD",
+    "sent_at": "2026-07-26T11:59:12.470186",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2167/": {
+    "agency_name": "IDEAL KONSALTING",
+    "sent_at": "2026-07-26T11:59:27.063718",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/991/": {
+    "agency_name": "BJANCA EXCLUSIVE",
+    "sent_at": "2026-07-26T11:59:38.177573",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/15/": {
+    "agency_name": "M REAL ESTATE",
+    "sent_at": "2026-07-26T11:59:49.624950",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1143/": {
+    "agency_name": "ANEKRETNINE",
+    "sent_at": "2026-07-26T12:00:09.029360",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/37/": {
+    "agency_name": "KLJUČ NEKRETNINE",
+    "sent_at": "2026-07-26T12:00:22.712600",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/249/": {
+    "agency_name": "KALEM NEKRETNINE",
+    "sent_at": "2026-07-26T12:00:36.741702",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/453/": {
+    "agency_name": "SM NEKRETNINE",
+    "sent_at": "2026-07-26T12:00:44.276103",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/309/": {
+    "agency_name": "APOLO NEKRETNINE",
+    "sent_at": "2026-07-26T12:00:57.483485",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/263/": {
+    "agency_name": "SIMONOVIĆ NEKRETNINE",
+    "sent_at": "2026-07-26T12:01:05.278527",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/785/": {
+    "agency_name": "REMINGTON REALTY",
+    "sent_at": "2026-07-26T12:01:17.278277",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1025/": {
+    "agency_name": "VODIČ NEKRETNINE",
+    "sent_at": "2026-07-26T12:01:29.350145",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/321/": {
+    "agency_name": "EUROPA EXCLUSIVE REAL ESTATE",
+    "sent_at": "2026-07-26T12:01:46.783047",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1011/": {
+    "agency_name": "RAMONDA PROPERTIES",
+    "sent_at": "2026-07-26T12:01:57.691371",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/681/": {
+    "agency_name": "LENKA NEKRETNINE",
+    "sent_at": "2026-07-26T12:02:11.116786",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/999/": {
+    "agency_name": "PRINCE PLUS MD",
+    "sent_at": "2026-07-26T12:02:26.114384",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/175/": {
+    "agency_name": "RADOŠEVIĆ NEKRETNINE",
+    "sent_at": "2026-07-26T12:02:38.822264",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1105/": {
+    "agency_name": "MEGA PROPERTIES",
+    "sent_at": "2026-07-26T12:02:51.573543",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/677/": {
+    "agency_name": "VIP NEKRETNINE",
+    "sent_at": "2026-07-26T12:03:05.475554",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/251/": {
+    "agency_name": "MILANKOVIĆ NEKRETNINE",
+    "sent_at": "2026-07-26T12:03:18.823653",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3449/": {
+    "agency_name": "HOME2HOME NEKRETNINE",
+    "sent_at": "2026-07-26T12:03:25.985807",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1631/": {
+    "agency_name": "ELITE NEKRETNINE",
+    "sent_at": "2026-07-26T12:03:38.061129",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/665/": {
+    "agency_name": "FELIX REAL ESTATE",
+    "sent_at": "2026-07-26T12:03:45.727502",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/781/": {
+    "agency_name": "NEXT NEKRETNINE",
+    "sent_at": "2026-07-26T12:03:57.961471",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/5/": {
+    "agency_name": "TIJANA VUKAN PROPERTY",
+    "sent_at": "2026-07-26T12:04:27.224773",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/721/": {
+    "agency_name": "NV NEKRETNINE",
+    "sent_at": "2026-07-27T00:02:21.225546",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1161/": {
+    "agency_name": "DOGMA NEKRETNINE",
+    "sent_at": "2026-07-27T00:02:40.440857",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/757/": {
+    "agency_name": "CENTROTEXTIL",
+    "sent_at": "2026-07-27T00:02:52.568555",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/531/": {
+    "agency_name": "EUROINVEST PROPERTIES DOO",
+    "sent_at": "2026-07-27T00:03:05.062732",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3647/": {
+    "agency_name": "Milkina kuca",
+    "sent_at": "2026-07-27T00:03:19.135485",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/339/": {
+    "agency_name": "META REAL ESTATE",
+    "sent_at": "2026-07-27T00:03:30.506613",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/733/": {
+    "agency_name": "VAŠ EVEREST",
+    "sent_at": "2026-07-27T00:03:43.285456",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/663/": {
+    "agency_name": "RADOŠEVIĆ NEKRETNINE CENTAR",
+    "sent_at": "2026-07-27T00:03:58.888343",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3459/": {
+    "agency_name": "AMARI PROPERTIES",
+    "sent_at": "2026-07-27T00:04:06.356207",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/333/": {
+    "agency_name": "EURO-WINNER NEKRETNINE",
+    "sent_at": "2026-07-27T00:04:17.635896",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/187/": {
+    "agency_name": "GALAS NEKRETNINE",
+    "sent_at": "2026-07-27T00:04:25.277701",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/447/": {
+    "agency_name": "KVADRATIĆ",
+    "sent_at": "2026-07-27T00:04:37.071207",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/971/": {
+    "agency_name": "IBIS-ASTRA",
+    "sent_at": "2026-07-27T00:04:50.206838",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/759/": {
+    "agency_name": "MODUL ART",
+    "sent_at": "2026-07-27T00:05:01.157389",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1867/": {
+    "agency_name": "GROF 011",
+    "sent_at": "2026-07-27T00:05:17.290308",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/535/": {
+    "agency_name": "TREZOR NEKRETNINE",
+    "sent_at": "2026-07-27T00:05:46.779228",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3455/": {
+    "agency_name": "ROMA COMPANY",
+    "sent_at": "2026-07-27T00:05:57.320012",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/353/": {
+    "agency_name": "VESTA NEKRETNINE",
+    "sent_at": "2026-07-27T00:06:04.400771",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1353/": {
+    "agency_name": "Sandra Milenković PR Capitalrent nekretnine",
+    "sent_at": "2026-07-27T00:06:14.805832",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/285/": {
+    "agency_name": "FIMA NEKRETNINE",
+    "sent_at": "2026-07-27T00:06:32.458635",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1013/": {
+    "agency_name": "PORTA NEKRETNINE",
+    "sent_at": "2026-07-27T00:11:24.555346",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1203/": {
+    "agency_name": "AGORA NEKRETNINE",
+    "sent_at": "2026-07-27T00:11:44.643026",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/7/": {
+    "agency_name": "PROFITIM",
+    "sent_at": "2026-07-27T00:13:04.061152",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4845/": {
+    "agency_name": "Bel Mondo",
+    "sent_at": "2026-07-27T00:13:40.246904",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/287/": {
+    "agency_name": "A CLUB REAL ESTATE",
+    "sent_at": "2026-07-27T00:13:59.170131",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/377/": {
+    "agency_name": "ADV ROYAL-CONSULTING",
+    "sent_at": "2026-07-27T08:15:02.980347",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/327/": {
+    "agency_name": "TITAN 011",
+    "sent_at": "2026-07-27T08:15:18.898650",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4313/": {
+    "agency_name": "LEO REAL ESTATE",
+    "sent_at": "2026-07-27T08:15:35.873305",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/299/": {
+    "agency_name": "BEOEXPERT",
+    "sent_at": "2026-07-27T08:15:47.310504",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/391/": {
+    "agency_name": "X GROUP",
+    "sent_at": "2026-07-27T08:16:01.142885",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1467/": {
+    "agency_name": "CONTINENTAL 100",
+    "sent_at": "2026-07-27T08:16:15.132917",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3361/": {
+    "agency_name": "BEOPRO PROPERTIES 011",
+    "sent_at": "2026-07-27T08:16:31.962933",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/749/": {
+    "agency_name": "RELIFE NEKRETNINE",
+    "sent_at": "2026-07-27T08:16:47.531661",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/639/": {
+    "agency_name": "MIGON",
+    "sent_at": "2026-07-27T08:17:01.698426",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/371/": {
+    "agency_name": "ALBATROS NEKRETNINE",
+    "sent_at": "2026-07-27T08:17:13.181870",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/399/": {
+    "agency_name": "AXIA EXCLUSIVE PROPERTIES",
+    "sent_at": "2026-07-27T08:17:23.826403",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/541/": {
+    "agency_name": "AVENTIS",
+    "sent_at": "2026-07-27T08:18:06.260080",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2329/": {
+    "agency_name": "PRENITA-HEM",
+    "sent_at": "2026-07-27T08:18:18.456721",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3259/": {
+    "agency_name": "PALASPLUS",
+    "sent_at": "2026-07-27T08:18:32.343908",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/411/": {
+    "agency_name": "ALEKSANDAR NEKRETNINE 011",
+    "sent_at": "2026-07-27T08:18:45.025364",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1471/": {
+    "agency_name": "SAN LUNI",
+    "sent_at": "2026-07-27T08:19:02.493398",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4881/": {
+    "agency_name": "IDEALS BG NEKRETNINE",
+    "sent_at": "2026-07-27T08:19:15.935463",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/289/": {
+    "agency_name": "ALEGRO LINE",
+    "sent_at": "2026-07-27T08:19:31.256543",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2595/": {
+    "agency_name": "SUPER STAN",
+    "sent_at": "2026-07-27T08:19:41.556809",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/981/": {
+    "agency_name": "VAŠ NOVI PROSTOR",
+    "sent_at": "2026-07-27T08:19:53.024672",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/269/": {
+    "agency_name": "NEKRETNINE RIM",
+    "sent_at": "2026-07-27T08:20:05.531720",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1797/": {
+    "agency_name": "CENTURY 66 RS",
+    "sent_at": "2026-07-27T08:20:16.487615",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1813/": {
+    "agency_name": "DOLCE VITA REALTY",
+    "sent_at": "2026-07-27T08:20:32.493616",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/375/": {
+    "agency_name": "LIBRA REAL ESTATE",
+    "sent_at": "2026-07-27T08:20:47.260795",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/701/": {
+    "agency_name": "LUX HOME",
+    "sent_at": "2026-07-27T08:21:02.059739",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3483/": {
+    "agency_name": "MAXIM MEDIA DOO",
+    "sent_at": "2026-07-27T08:21:14.789714",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/737/": {
+    "agency_name": "BALKAN PROPERTY MANAGEMENT",
+    "sent_at": "2026-07-27T08:21:32.256482",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/281/": {
+    "agency_name": "LUSSO NEKRETNINE",
+    "sent_at": "2026-07-27T08:21:46.969869",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/275/": {
+    "agency_name": "ENTEGA",
+    "sent_at": "2026-07-27T08:21:58.970811",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/571/": {
+    "agency_name": "DINA DOM",
+    "sent_at": "2026-07-27T08:22:10.949892",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/259/": {
+    "agency_name": "STANODAVAC GROCKA",
+    "sent_at": "2026-07-27T08:22:22.285325",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/291/": {
+    "agency_name": "WINNER NEKRETNINE",
+    "sent_at": "2026-07-27T08:22:34.267256",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/605/": {
+    "agency_name": "VIVO NEKRETNINE",
+    "sent_at": "2026-07-27T08:22:49.183731",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/693/": {
+    "agency_name": "BOLTON REAL ESTATE",
+    "sent_at": "2026-07-27T08:23:01.251561",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/821/": {
+    "agency_name": "VIDIKOVAC VISTA",
+    "sent_at": "2026-07-27T08:23:11.840318",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/835/": {
+    "agency_name": "LAVA GLOBAL REALTY",
+    "sent_at": "2026-07-27T08:23:23.125993",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1039/": {
+    "agency_name": "IMAGE NEKRETNINE",
+    "sent_at": "2026-07-27T08:23:45.399031",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/369/": {
+    "agency_name": "GEMI TRADE",
+    "sent_at": "2026-07-27T08:24:16.370282",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/953/": {
+    "agency_name": "3DH REAL ESTATE",
+    "sent_at": "2026-07-27T08:24:32.216872",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4857/": {
+    "agency_name": "SAVA NEKRETNINE",
+    "sent_at": "2026-07-27T08:24:47.983561",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/65/": {
+    "agency_name": "BEOSTATUS",
+    "sent_at": "2026-07-27T08:25:01.519810",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/177/": {
+    "agency_name": "CONFIDO NEKRETNINE",
+    "sent_at": "2026-07-27T08:25:13.451273",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/977/": {
+    "agency_name": "PLUS-BONUS",
+    "sent_at": "2026-07-27T08:25:24.077347",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2575/": {
+    "agency_name": "IV NEKRETNINE",
+    "sent_at": "2026-07-27T08:25:39.647754",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/633/": {
+    "agency_name": "CITYPRO",
+    "sent_at": "2026-07-27T08:25:59.808805",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/789/": {
+    "agency_name": "NEŠKOVIĆ-STOJKOV NEKRETNINE",
+    "sent_at": "2026-07-27T09:02:47.915255",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3421/": {
+    "agency_name": "HOUSE BOOKER",
+    "sent_at": "2026-07-27T09:03:03.431749",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3405/": {
+    "agency_name": "KAAT Nekretnine",
+    "sent_at": "2026-07-27T09:03:17.241369",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1925/": {
+    "agency_name": "NOVI DOM",
+    "sent_at": "2026-07-27T09:03:34.338984",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/855/": {
+    "agency_name": "URBANIA",
+    "sent_at": "2026-07-27T09:03:48.726475",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/813/": {
+    "agency_name": "BLANUSA REAL ESTATE",
+    "sent_at": "2026-07-27T09:04:02.178741",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3273/": {
+    "agency_name": "OZRENKA NEKRETNINE",
+    "sent_at": "2026-07-27T09:04:13.313820",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3477/": {
+    "agency_name": "SISTEM TIM",
+    "sent_at": "2026-07-27T09:04:29.447921",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3277/": {
+    "agency_name": "BG PROPERTY GROUP",
+    "sent_at": "2026-07-27T09:04:43.928565",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/637/": {
+    "agency_name": "NEPOKRETNOSTI REAL ESTATE",
+    "sent_at": "2026-07-27T09:04:54.013754",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/367/": {
+    "agency_name": "EUROKVADRAT",
+    "sent_at": "2026-07-27T09:05:03.680133",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1129/": {
+    "agency_name": "SAVA LUX PROPERTY",
+    "sent_at": "2026-07-27T09:05:15.256653",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/359/": {
+    "agency_name": "ALFA PLUS NEKRETNINE",
+    "sent_at": "2026-07-27T09:05:31.527955",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/601/": {
+    "agency_name": "TRIONEKRETNINE",
+    "sent_at": "2026-07-27T09:05:48.527896",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/833/": {
+    "agency_name": "LESTO REALTY",
+    "sent_at": "2026-07-27T09:06:01.828440",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/845/": {
+    "agency_name": "KEČA NEKRETNINE",
+    "sent_at": "2026-07-27T09:06:27.830428",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3423/": {
+    "agency_name": "QUATTRO NEKRETNINE",
+    "sent_at": "2026-07-27T09:06:43.859631",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1871/": {
+    "agency_name": "COMFORT DE LUXE",
+    "sent_at": "2026-07-27T09:06:58.258916",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/529/": {
+    "agency_name": "BRIMA REAL ESTATE",
+    "sent_at": "2026-07-27T09:07:09.411963",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/779/": {
+    "agency_name": "TEŠIĆ KA",
+    "sent_at": "2026-07-27T09:07:21.945763",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2641/": {
+    "agency_name": "REAL ESTATE HUB",
+    "sent_at": "2026-07-27T09:07:33.346638",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/559/": {
+    "agency_name": "LATERNA NEKRETNINE",
+    "sent_at": "2026-07-27T09:07:50.269196",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2541/": {
+    "agency_name": "TENA PLUS",
+    "sent_at": "2026-07-27T09:08:02.192771",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4495/": {
+    "agency_name": "Krstic Nekretnine DOO",
+    "sent_at": "2026-07-27T09:08:17.709243",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/585/": {
+    "agency_name": "HELIANTHUS NEKRETNINE",
+    "sent_at": "2026-07-27T09:08:28.840796",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2293/": {
+    "agency_name": "NEKRETNINE STAR 011",
+    "sent_at": "2026-07-27T09:08:40.336960",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3269/": {
+    "agency_name": "SINGIDUN",
+    "sent_at": "2026-07-27T09:08:51.223914",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/671/": {
+    "agency_name": "VILOTIĆ GROUP",
+    "sent_at": "2026-07-27T09:09:05.109868",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1187/": {
+    "agency_name": "URBAN NEST REAL ESTATE",
+    "sent_at": "2026-07-27T09:09:24.569474",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/815/": {
+    "agency_name": "SINTAKSA REAL ESTATE",
+    "sent_at": "2026-07-27T09:09:34.405337",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2273/": {
+    "agency_name": "LAWA HOSPITALITY",
+    "sent_at": "2026-07-27T09:09:50.337117",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2503/": {
+    "agency_name": "OBLAK LUX DOO",
+    "sent_at": "2026-07-27T09:10:02.791088",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3237/": {
+    "agency_name": "BEOPROJEKT INŽENJERING",
+    "sent_at": "2026-07-27T09:10:18.492252",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1935/": {
+    "agency_name": "SRDIĆ MARKOVIĆ",
+    "sent_at": "2026-07-27T09:10:33.408414",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1185/": {
+    "agency_name": "DOMINIUM FSR",
+    "sent_at": "2026-07-27T09:10:44.393109",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2643/": {
+    "agency_name": "SUNCE PLUS",
+    "sent_at": "2026-07-27T09:11:01.421279",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3463/": {
+    "agency_name": "URBANOVA REALTY",
+    "sent_at": "2026-07-27T09:11:15.204842",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/311/": {
+    "agency_name": "DREAM REAL ESTATE",
+    "sent_at": "2026-07-27T09:11:28.955243",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1019/": {
+    "agency_name": "NEKRETNINE NIKOLAJEVIĆ",
+    "sent_at": "2026-07-27T09:11:42.954736",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/595/": {
+    "agency_name": "IDEALAN STAN doo",
+    "sent_at": "2026-07-27T09:11:57.141026",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3063/": {
+    "agency_name": "ARAMONT",
+    "sent_at": "2026-07-27T09:12:08.390405",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3399/": {
+    "agency_name": "IMPULS NEKRETNINE",
+    "sent_at": "2026-07-27T09:12:18.392004",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4873/": {
+    "agency_name": "GRAND STAR doo",
+    "sent_at": "2026-07-27T09:12:29.838444",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/29/": {
+    "agency_name": "AGENCIJA BRANKOVIĆ",
+    "sent_at": "2026-07-27T09:12:39.869827",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1927/": {
+    "agency_name": "TOP REAL ESTATE",
+    "sent_at": "2026-07-27T09:12:53.486422",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/49/": {
+    "agency_name": "DENČIĆ",
+    "sent_at": "2026-07-27T09:13:10.074381",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/385/": {
+    "agency_name": "NOVA ZGRADA",
+    "sent_at": "2026-07-27T09:13:22.973429",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1133/": {
+    "agency_name": "GALIJA REAL ESTATE",
+    "sent_at": "2026-07-27T09:13:34.239794",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3905/": {
+    "agency_name": "OzNekretnine",
+    "sent_at": "2026-07-27T09:13:48.126531",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/239/": {
+    "agency_name": "LISTER NEKRETNINE",
+    "sent_at": "2026-07-27T09:14:04.990155",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/393/": {
+    "agency_name": "OAZA PROPERTIES",
+    "sent_at": "2026-07-27T09:14:15.003649",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/865/": {
+    "agency_name": "REAL ESTATE SOLUTIONS",
+    "sent_at": "2026-07-27T09:14:28.272853",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1181/": {
+    "agency_name": "EDEN INTERNATIONAL 2013",
+    "sent_at": "2026-07-27T09:14:51.553450",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1209/": {
+    "agency_name": "LVN REALTY AND ADVISORY",
+    "sent_at": "2026-07-27T09:15:07.054711",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/823/": {
+    "agency_name": "NEKRETNINE NIKOLIĆ",
+    "sent_at": "2026-07-27T09:15:17.716497",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3487/": {
+    "agency_name": "AFI SKYLINE RESIDENCE",
+    "sent_at": "2026-07-27T09:15:29.933859",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3437/": {
+    "agency_name": "GJV EXPERT",
+    "sent_at": "2026-07-27T09:15:45.569578",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2581/": {
+    "agency_name": "RENTANOVA",
+    "sent_at": "2026-07-27T09:16:01.731018",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2845/": {
+    "agency_name": "NEKRETNINE RANĐELOVIĆ",
+    "sent_at": "2026-07-27T09:16:18.218365",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3/": {
+    "agency_name": "Casamia",
+    "sent_at": "2026-07-27T09:16:37.563569",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1137/": {
+    "agency_name": "ALTA PROPERTY",
+    "sent_at": "2026-07-27T09:16:51.444895",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/167/": {
+    "agency_name": "DE-MI INTERNATIONAL",
+    "sent_at": "2026-07-27T09:17:04.120428",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1855/": {
+    "agency_name": "RENE 011",
+    "sent_at": "2026-07-27T09:17:21.298991",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/761/": {
+    "agency_name": "GREEN DOOR PROPERTIES",
+    "sent_at": "2026-07-27T09:18:11.922490",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1279/": {
+    "agency_name": "BGD NEKRETNINE",
+    "sent_at": "2026-07-27T09:18:28.272914",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3475/": {
+    "agency_name": "POTOCHNY REAL ESTATE",
+    "sent_at": "2026-07-27T09:18:45.285775",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1127/": {
+    "agency_name": "GEMAR",
+    "sent_at": "2026-07-27T09:19:37.617351",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1877/": {
+    "agency_name": "BG NEKRETNINE-VINČA",
+    "sent_at": "2026-07-27T09:19:53.131025",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/819/": {
+    "agency_name": "TIMI HOLDINGS LIMITED",
+    "sent_at": "2026-07-27T09:20:06.228628",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3425/": {
+    "agency_name": "PROPERTIES 4 YOU",
+    "sent_at": "2026-07-27T09:20:15.807428",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3431/": {
+    "agency_name": "GARNET REAL-ESTATE",
+    "sent_at": "2026-07-27T09:20:27.615610",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3471/": {
+    "agency_name": "MCP",
+    "sent_at": "2026-07-27T09:20:38.017479",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/5065/": {
+    "agency_name": "Kvadrat Više Nekretnine",
+    "sent_at": "2026-07-27T09:20:47.093084",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4909/": {
+    "agency_name": "Elite pro",
+    "sent_at": "2026-07-27T09:21:03.878041",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4593/": {
+    "agency_name": "AMAJLIJA NEKRETNINE",
+    "sent_at": "2026-07-27T09:21:15.959829",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/381/": {
+    "agency_name": "KONSTRUKTOR KONSALTING",
+    "sent_at": "2026-07-27T09:21:30.346391",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/373/": {
+    "agency_name": "SBRE",
+    "sent_at": "2026-07-27T09:21:43.400233",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1705/": {
+    "agency_name": "HOMA PROPERTIES",
+    "sent_at": "2026-07-27T09:21:58.797752",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1933/": {
+    "agency_name": "OZON NEKRETNINE",
+    "sent_at": "2026-07-27T09:22:11.694567",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/2569/": {
+    "agency_name": "GOLDNET REAL ESTATE",
+    "sent_at": "2026-07-27T09:22:25.347019",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3211/": {
+    "agency_name": "ĆIRIĆ HOME INVEST",
+    "sent_at": "2026-07-27T09:22:35.991399",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4891/": {
+    "agency_name": "NLV Estate Obrenovac",
+    "sent_at": "2026-07-27T09:22:51.962089",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4911/": {
+    "agency_name": "arcoSITE d.o.o.",
+    "sent_at": "2026-07-27T19:11:31.918660",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/863/": {
+    "agency_name": "KVADRAT OBRENOVAC",
+    "sent_at": "2026-07-27T19:11:47.700300",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/189/": {
+    "agency_name": "ADRIATIC BANK",
+    "sent_at": "2026-07-27T19:11:57.140024",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1763/": {
+    "agency_name": "SCP",
+    "sent_at": "2026-07-27T19:12:09.501625",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3305/": {
+    "agency_name": "SKALINA",
+    "sent_at": "2026-07-27T19:12:24.849630",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/179/": {
+    "agency_name": "ANKH",
+    "sent_at": "2026-07-27T19:12:39.286115",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/293/": {
+    "agency_name": "MINT",
+    "sent_at": "2026-07-27T19:12:56.125824",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/343/": {
+    "agency_name": "MVC MIRKOVIĆ INVEST",
+    "sent_at": "2026-07-27T19:13:08.131334",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1597/": {
+    "agency_name": "DLD-PRO",
+    "sent_at": "2026-07-27T19:13:22.996729",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/695/": {
+    "agency_name": "CONSULTING PLUS",
+    "sent_at": "2026-07-27T19:13:35.275232",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3415/": {
+    "agency_name": "iO Partners",
+    "sent_at": "2026-07-27T19:13:51.808941",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/3467/": {
+    "agency_name": "GEOTAUR",
+    "sent_at": "2026-07-27T19:14:08.799908",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4719/": {
+    "agency_name": "LEON REAL ESTATE",
+    "sent_at": "2026-07-27T19:14:20.371541",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1093/": {
+    "agency_name": "EOS MATRIX",
+    "sent_at": "2026-07-27T19:14:35.983526",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/951/": {
+    "agency_name": "MNM INVEST GROUP",
+    "sent_at": "2026-07-27T19:14:50.766016",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/533/": {
+    "agency_name": "PROCREDIT BANK A.D.",
+    "sent_at": "2026-07-27T19:15:06.666177",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/829/": {
+    "agency_name": "SAX BUILDING",
+    "sent_at": "2026-07-27T19:15:18.748488",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/171/": {
+    "agency_name": "BUILD.ING",
+    "sent_at": "2026-07-27T19:15:31.346171",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/831/": {
+    "agency_name": "CITY SPACE REAL ESTATE",
+    "sent_at": "2026-07-27T19:15:43.212834",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/267/": {
+    "agency_name": "PARITAS NEKRETNINE",
+    "sent_at": "2026-07-27T19:15:56.850191",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1861/": {
+    "agency_name": "AUTOR",
+    "sent_at": "2026-07-27T19:16:50.109580",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1923/": {
+    "agency_name": "KATEI",
+    "sent_at": "2026-07-27T19:17:02.401302",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4491/": {
+    "agency_name": "NIKS Development",
+    "sent_at": "2026-07-27T19:17:12.857362",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/4809/": {
+    "agency_name": "YUGOPROJECT CONSULTING BEOGRAD",
+    "sent_at": "2026-07-27T19:17:29.628901",
+    "status": "SENT"
+  },
+  "https://www.nekretnine.rs/en/agencije-za-nekretnine/1/": {
+    "agency_name": "Fra Ore Test",
+    "sent_at": "2026-07-27T19:17:39.373784",
+    "status": "SENT"
+  }
+}
