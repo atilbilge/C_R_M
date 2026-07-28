@@ -98,7 +98,7 @@ def get_agencies():
         search_pattern = f"%{q}%"
         params.extend([search_pattern] * 8)
 
-    sql += " GROUP BY a.id ORDER BY a.id ASC LIMIT 200;"
+    sql += " GROUP BY a.id ORDER BY a.id ASC;"
 
     cursor.execute(sql, params)
     rows = cursor.fetchall()
