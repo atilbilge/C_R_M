@@ -77,6 +77,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // NVIDIA AI Translation Helper
+    async function handleTranslateClick(btn, messageText, containerEl) {
+        let transBox = containerEl.querySelector('.translation-box');
+        if (transBox) {
+            if (transBox.style.display === 'none') {
+                transBox.style.display = 'block';
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Çeviriyi Gizle';
+            } else {
+                transBox.style.display = 'none';
+                btn.innerHTML = '<i class="fa-solid fa-language" style="color: var(--accent-indigo);"></i> Türkçe\'ye Çevir';
+            }
+            return;
+        }
+
+        const originalBtnHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Çevriliyor...';
+
+        try {
+            const res = await fetch('/api/translate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: messageText })
+            });
+            const data = await res.json();
+
+            if (data.translated_text) {
+                transBox = document.createElement('div');
+                transBox.className = 'translation-box';
+                transBox.style.cssText = 'margin-top: 10px; background: rgba(42, 161, 152, 0.08); border-left: 4px solid var(--accent-indigo); padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--text-primary);';
+
+                const isHtml = data.translated_text.includes('<!DOCTYPE') || data.translated_text.includes('<html') || data.translated_text.includes('<table');
+                const contentHtml = isHtml
+                    ? `<iframe srcdoc="${data.translated_text.replace(/"/g, '&quot;')}" style="width: 100%; height: 340px; border: 1px solid var(--border-color); border-radius: 6px; background: #ffffff; margin-top: 6px;" frameborder="0"></iframe>`
+                    : `<div style="line-height: 1.5; white-space: pre-wrap;">${data.translated_text}</div>`;
+
+                transBox.innerHTML = `
+                    <div style="font-weight: 600; font-size: 0.75rem; color: var(--accent-indigo); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                        <i class="fa-solid fa-robot"></i> NVIDIA AI Türkçe Çevirisi (Llama 3.3 70B):
+                    </div>
+                    ${contentHtml}
+                `;
+                containerEl.appendChild(transBox);
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Çeviriyi Gizle';
+            } else {
+                alert(data.error || 'Çeviri yapılırken bir hata oluştu.');
+                btn.innerHTML = originalBtnHtml;
+            }
+        } catch (err) {
+            console.error('Çeviri hatası:', err);
+            alert('Çeviri servisine ulaşılamadı.');
+            btn.innerHTML = originalBtnHtml;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
     // 1. Fetch & Render Overall Stats & Dashboard Overview Widgets
     async function loadStats() {
         try {
@@ -350,12 +407,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         : `<div style="white-space: pre-wrap;">${comm.message}</div>`;
 
                     item.innerHTML = `
-                        <div class="timeline-meta">
-                            <span><i class="fa-solid fa-paper-plane"></i> ${comm.sender} &rarr; ${comm.recipient} ${statusBadge}</span>
-                            <span><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
+                        <div class="timeline-meta" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                            <div>
+                                <span><i class="fa-solid fa-paper-plane"></i> ${comm.sender} &rarr; ${comm.recipient} ${statusBadge}</span>
+                                <span style="margin-left: 10px;"><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
+                            </div>
+                            <button class="btn btn-sm btn-secondary btn-translate-msg" title="NVIDIA AI ile Türkçe'ye Çevir">
+                                <i class="fa-solid fa-language" style="color: var(--accent-indigo);"></i> Türkçe'ye Çevir
+                            </button>
                         </div>
                         <div class="timeline-body">${messageContent}</div>
                     `;
+
+                    const transBtn = item.querySelector('.btn-translate-msg');
+                    const bodyEl = item.querySelector('.timeline-body');
+                    if (transBtn) {
+                        transBtn.addEventListener('click', () => {
+                            handleTranslateClick(transBtn, comm.message, bodyEl);
+                        });
+                    }
+
                     modalTimeline.appendChild(item);
                 });
             }
@@ -441,6 +512,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span class="status-tag tag-${comm.status.toLowerCase()}">${comm.status}</span>
+                            <button class="btn btn-sm btn-secondary btn-translate-msg" title="NVIDIA AI ile Türkçe'ye Çevir">
+                                <i class="fa-solid fa-language" style="color: var(--accent-indigo);"></i> Türkçe'ye Çevir
+                            </button>
                             <button class="btn btn-sm btn-secondary btn-toggle-expand" title="Detayı Aç/Kapat">
                                 <i class="fa-solid fa-chevron-down icon-arrow"></i> <span class="expand-text">Detayı Göster</span>
                             </button>
@@ -491,6 +565,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 headerEl.addEventListener('click', toggleCard);
                 snippetEl.addEventListener('click', toggleCard);
                 toggleBtn.addEventListener('click', toggleCard);
+
+                const transBtn = card.querySelector('.btn-translate-msg');
+                if (transBtn) {
+                    transBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (card.classList.contains('collapsed')) {
+                            toggleCard(e);
+                        }
+                        handleTranslateClick(transBtn, comm.message, bodyEl);
+                    });
+                }
 
                 commsFeedList.appendChild(card);
             });

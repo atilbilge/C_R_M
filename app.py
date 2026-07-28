@@ -7,6 +7,7 @@ Stanomer Acente CRM - Web Dashboard Backend (Flask API)
 
 import os
 import sys
+import json
 from datetime import datetime, timedelta
 from flask import Flask, jsonify, request, send_from_directory
 import db
@@ -278,6 +279,56 @@ def sync_emails_route():
         return jsonify({"success": True, "new_messages": new_count, "last_sync": last_sync})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "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")
+NVIDIA_MODEL = "meta/llama-3.3-70b-instruct"
+
+
+@app.route("/api/translate", methods=["POST"])
+def translate_text_route():
+    """NVIDIA NIM API kullanarak mesaj metnini Türkçe'ye çevirir."""
+    data = request.json or {}
+    text = data.get("text", "").strip()
+    if not text:
+        return jsonify({"error": "Çevrilecek metin bulunamadı."}), 400
+
+    is_html = "<!DOCTYPE" in text or "<html" in text or "<table" in text
+
+    system_prompt = (
+        "You are an expert professional translator. Translate the given Serbian/English text into natural, fluent Turkish. "
+        "Do not summarize. Output ONLY the Turkish translation, with no introductory text, notes, or explanations."
+    )
+    if is_html:
+        system_prompt += " Preserve all HTML tags, layout, and formatting intact. Only translate the human-readable text contents."
+
+    payload = {
+        "model": NVIDIA_MODEL,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": text[:4000]}
+        ],
+        "temperature": 0.2,
+        "max_tokens": 2048
+    }
+
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            "https://integrate.api.nvidia.com/v1/chat/completions",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {NVIDIA_API_KEY}",
+                "Content-Type": "application/json"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            res_data = json.loads(resp.read().decode("utf-8"))
+            translated = res_data["choices"][0]["message"]["content"].strip()
+            return jsonify({"translated_text": translated, "model": NVIDIA_MODEL})
+    except Exception as e:
+        print("NVIDIA NIM Translation error:", e)
+        return jsonify({"error": f"Çeviri hatası: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
