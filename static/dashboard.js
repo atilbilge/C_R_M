@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statResponded.textContent = respondedCount;
             statSent.textContent = sentCount;
 
-            // Populate City Select Options
+            // Populate City Select Options & City List Widget
             filterCitySelect.innerHTML = '<option value="">Tüm Şehirler</option>';
             if (data.top_cities) {
                 dashboardCitiesList.innerHTML = '';
@@ -105,8 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         filterCitySelect.appendChild(opt);
 
                         const row = document.createElement('div');
-                        row.style.cssText = 'display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem;';
-                        row.innerHTML = `<span>${city}</span> <strong style="color: var(--accent-indigo);">${count} Acente</strong>`;
+                        row.style.cssText = 'display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; cursor: pointer;';
+                        row.className = 'city-widget-row';
+                        row.innerHTML = `<span><i class="fa-solid fa-location-dot" style="color: var(--accent-indigo); margin-right: 6px;"></i>${city}</span> <strong style="color: var(--accent-indigo);">${count} Acente</strong>`;
+                        row.addEventListener('click', () => {
+                            filterAndShowAgencies({ city: city });
+                        });
                         dashboardCitiesList.appendChild(row);
                     }
                 });
@@ -447,19 +451,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    let searchTimeout = null;
-    globalSearchInput.addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            currentSearchQuery = e.target.value;
-            const currentTab = document.querySelector('.tab-view.active')?.id;
-            if (currentTab !== 'view-agencies') {
-                switchToTab('view-agencies');
+    // Helper to filter agencies and navigate to Agencies tab
+    window.filterAndShowAgencies = function({ status = '', city = '', hasPhone = '', hasEmail = '', search = '' } = {}) {
+        currentFilterStatus = status;
+        currentFilterCity = city;
+        currentFilterHasPhone = hasPhone;
+        currentFilterHasEmail = hasEmail;
+        currentSearchQuery = search;
+
+        if (filterCitySelect) filterCitySelect.value = city;
+        if (filterHasPhoneSelect) filterHasPhoneSelect.value = hasPhone;
+        if (filterHasEmailSelect) filterHasEmailSelect.value = hasEmail;
+        if (globalSearchInput) globalSearchInput.value = search;
+
+        statusPills.forEach(p => {
+            if (p.getAttribute('data-status') === status) {
+                p.classList.add('active');
             } else {
-                loadAgencies();
+                p.classList.remove('active');
             }
-        }, 300);
-    });
+        });
+
+        switchToTab('view-agencies');
+    };
+
+    // Dashboard Stat Cards Click Handlers
+    const cardTotalAgencies = document.getElementById('card-total-agencies');
+    if (cardTotalAgencies) {
+        cardTotalAgencies.addEventListener('click', () => {
+            filterAndShowAgencies({ status: '', city: '', hasPhone: '', hasEmail: '', search: '' });
+        });
+    }
+
+    const cardResponded = document.getElementById('card-responded');
+    if (cardResponded) {
+        cardResponded.addEventListener('click', () => {
+            filterAndShowAgencies({ status: 'RESPONDED' });
+        });
+    }
+
+    const cardSent = document.getElementById('card-sent');
+    if (cardSent) {
+        cardSent.addEventListener('click', () => {
+            filterAndShowAgencies({ status: 'SENT' });
+        });
+    }
+
+    const cardPhones = document.getElementById('card-phones');
+    if (cardPhones) {
+        cardPhones.addEventListener('click', () => {
+            filterAndShowAgencies({ hasPhone: 'yes' });
+        });
+    }
 
     // Quick Add Modal Form Listener
     async function populateAgencyDropdown() {

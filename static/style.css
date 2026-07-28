@@ -257,6 +257,8 @@ body {
     gap: 1.25rem;
     transition: var(--transition);
     backdrop-filter: var(--glass-blur);
+    cursor: pointer;
+    user-select: none;
 }
 
 .stat-card:hover {
