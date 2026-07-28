@@ -318,12 +318,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? `<span class="status-tag tag-failed" style="margin-left: 6px;"><i class="fa-solid fa-circle-exclamation"></i> TESLİMAT HATASI</span>`
                         : '';
 
+                    const messageContent = (comm.message.includes('<!DOCTYPE') || comm.message.includes('<html') || comm.message.includes('<table'))
+                        ? `<iframe srcdoc="${comm.message.replace(/"/g, '&quot;')}" style="width: 100%; height: 420px; border: 1px solid var(--border-color); border-radius: 12px; background: #ffffff; margin-top: 8px;" frameborder="0"></iframe>`
+                        : `<div style="white-space: pre-wrap;">${comm.message}</div>`;
+
                     item.innerHTML = `
                         <div class="timeline-meta">
                             <span><i class="fa-solid fa-paper-plane"></i> ${comm.sender} &rarr; ${comm.recipient} ${statusBadge}</span>
                             <span><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
                         </div>
-                        <div class="timeline-body">${comm.message}</div>
+                        <div class="timeline-body">${messageContent}</div>
                     `;
                     modalTimeline.appendChild(item);
                 });
@@ -400,6 +404,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
 
+                const feedMessageContent = (comm.message.includes('<!DOCTYPE') || comm.message.includes('<html') || comm.message.includes('<table'))
+                    ? `<iframe srcdoc="${comm.message.replace(/"/g, '&quot;')}" style="width: 100%; height: 350px; border: 1px solid var(--border-color); border-radius: 8px; background: #ffffff; margin-top: 8px;" frameborder="0"></iframe>`
+                    : `<div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>`;
+
                 card.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                         <div>
@@ -417,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span><i class="fa-solid fa-user"></i> ${comm.sender} &rarr; ${comm.recipient}</span>
                         <span style="margin-left: 1rem;"><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
                     </div>
-                    <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>
+                    ${feedMessageContent}
                 `;
                 commsFeedList.appendChild(card);
             });
