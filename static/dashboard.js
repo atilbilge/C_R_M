@@ -128,26 +128,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Load Recent Responded Agencies Widget
-            const agRes = await fetch('/api/agencies?status=RESPONDED');
-            const respondedAgencies = await agRes.json();
+            // Load Recent Interactions Widget (Sondan başa doğru sıralı son 6 etkileşim)
+            const commsRes = await fetch('/api/communications');
+            const comms = await commsRes.json();
 
             dashboardRecentAgencies.innerHTML = '';
-            if (respondedAgencies && respondedAgencies.length > 0) {
-                respondedAgencies.forEach(a => {
+            if (comms && comms.length > 0) {
+                const recentComms = comms.slice(0, 6);
+                recentComms.forEach(c => {
                     const div = document.createElement('div');
-                    div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);';
+                    div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;';
+                    div.className = 'recent-interaction-row';
+
+                    const formattedDate = new Date(c.date).toLocaleString('tr-TR', {
+                        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    div.addEventListener('click', () => {
+                        if (c.agency_id) openAgencyModal(c.agency_id);
+                    });
+
                     div.innerHTML = `
                         <div>
-                            <strong style="color: var(--text-primary);">${a.name}</strong>
-                            <div style="font-size: 0.75rem; color: var(--text-muted);">${a.city || 'Şehir Belirtilmemiş'} &bull; ${a.emails.join(', ') || a.phones.join(', ')}</div>
+                            <strong style="color: var(--text-primary); font-size: 0.92rem;">${c.agency_name}</strong>
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                                <span><i class="fa-regular fa-clock" style="color: var(--accent-indigo);"></i> ${formattedDate}</span>
+                                <span style="margin-left: 8px;">&bull; ${c.sender} &rarr; ${c.recipient}</span>
+                            </div>
                         </div>
-                        <button class="btn btn-sm btn-secondary" onclick="openAgencyModal(${a.id})"><i class="fa-solid fa-clock-rotate-left"></i> Zaman Çizelgesi</button>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="status-tag tag-${c.status.toLowerCase()}">${c.status}</span>
+                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); openAgencyModal(${c.agency_id});">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Zaman Çizelgesi
+                            </button>
+                        </div>
                     `;
                     dashboardRecentAgencies.appendChild(div);
                 });
             } else {
-                dashboardRecentAgencies.innerHTML = '<p style="color: var(--text-muted);">Henüz yanıt veren acente bulunmuyor.</p>';
+                dashboardRecentAgencies.innerHTML = '<p style="color: var(--text-muted);">Henüz kaydedilmiş etkileşim bulunmuyor.</p>';
             }
 
         } catch (err) {
