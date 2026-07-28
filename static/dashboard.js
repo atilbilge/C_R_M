@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const feedMessageContent = (comm.message.includes('<!DOCTYPE') || comm.message.includes('<html') || comm.message.includes('<table'))
                     ? `<iframe srcdoc="${comm.message.replace(/"/g, '&quot;')}" style="width: 100%; height: 350px; border: 1px solid var(--border-color); border-radius: 8px; background: #ffffff; margin-top: 8px;" frameborder="0"></iframe>`
-                    : `<div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>`;
+                    : `<div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>`;
 
                 card.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
