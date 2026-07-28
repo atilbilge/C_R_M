@@ -267,6 +267,12 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
+.comm-feed-card:hover {
+    border-color: var(--accent-indigo) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
 .stat-icon {
     width: 52px;
     height: 52px;

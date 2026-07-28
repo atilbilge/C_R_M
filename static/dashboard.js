@@ -355,8 +355,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             comms.forEach(comm => {
                 const card = document.createElement('div');
-                card.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;';
+                card.className = 'comm-feed-card';
+                card.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; cursor: pointer; transition: transform 0.2s, border-color 0.2s;';
                 
+                card.addEventListener('click', () => {
+                    if (comm.agency_id) {
+                        openAgencyModal(comm.agency_id);
+                    }
+                });
+
                 const formattedDate = new Date(comm.date).toLocaleString('tr-TR', {
                     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
@@ -367,13 +374,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <strong style="color: var(--text-primary); font-size: 1rem;">${comm.agency_name}</strong>
                             <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">(${comm.agency_city || 'Şehir Yok'})</span>
                         </div>
-                        <span class="status-tag tag-${comm.status.toLowerCase()}">${comm.status}</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="status-tag tag-${comm.status.toLowerCase()}">${comm.status}</span>
+                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); openAgencyModal(${comm.agency_id});">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Zaman Çizelgesi
+                            </button>
+                        </div>
                     </div>
                     <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
                         <span><i class="fa-solid fa-user"></i> ${comm.sender} &rarr; ${comm.recipient}</span>
                         <span style="margin-left: 1rem;"><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
                     </div>
-                    <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>
+                    <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>
                 `;
                 commsFeedList.appendChild(card);
             });
