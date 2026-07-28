@@ -97,6 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
             statResponded.textContent = respondedCount;
             statSent.textContent = sentCount;
 
+            const lastSyncEl = document.getElementById('last-sync-time');
+            if (lastSyncEl && data.last_email_sync) {
+                const syncDt = new Date(data.last_email_sync);
+                lastSyncEl.textContent = syncDt.toLocaleString('tr-TR', {
+                    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                });
+            }
+
             // Populate City Select Options & City List Widget
             filterCitySelect.innerHTML = '<option value="">Tüm Şehirler</option>';
             if (data.top_cities) {
@@ -627,6 +635,30 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('İletişim ekleme hatası:', err);
         }
     });
+
+    // Sync Status Badge Click Handler
+    const syncBadge = document.getElementById('sync-status-badge');
+    const syncIcon = document.getElementById('sync-icon');
+
+    if (syncBadge) {
+        syncBadge.addEventListener('click', async () => {
+            if (syncIcon) syncIcon.classList.add('fa-spin');
+            try {
+                const res = await fetch('/api/sync-emails', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    await loadStats();
+                    const activeTab = document.querySelector('.tab-view.active')?.id;
+                    if (activeTab === 'view-agencies') loadAgencies();
+                    if (activeTab === 'view-comms') loadCommunicationsFeed();
+                }
+            } catch (err) {
+                console.error('E-posta senkronizasyon hatası:', err);
+            } finally {
+                if (syncIcon) syncIcon.classList.remove('fa-spin');
+            }
+        });
+    }
 
     // Initial Load
     loadStats();

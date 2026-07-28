@@ -270,6 +270,16 @@ def get_referrals_overview():
     return jsonify(rows)
 
 
+@app.route("/api/sync-emails", methods=["POST"])
+def sync_emails_route():
+    """Gmail e-postalarını senkronize eder."""
+    try:
+        new_count, last_sync = db.sync_emails_from_gmail()
+        return jsonify({"success": True, "new_messages": new_count, "last_sync": last_sync})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5050))
     print(f"🚀 Stanomer Web Dashboard Başlatılıyor: http://localhost:{port}")

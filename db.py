@@ -135,6 +135,15 @@ def init_db(db_path: str = DB_PATH):
     );
     """)
 
+    # 7. Sistem Meta Verileri Tablosu
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS system_meta (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
     # İndeksler
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_agencies_name ON agencies(name);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_agencies_city ON agencies(city);")
@@ -374,6 +383,159 @@ def get_agency_details(agency_id: int, db_path: str = DB_PATH) -> Optional[Dict[
     return agency
 
 
+def get_meta(key: str, default: Optional[str] = None, db_path: str = DB_PATH) -> Optional[str]:
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT value FROM system_meta WHERE key = ?", (key,))
+    row = cursor.fetchone()
+    conn.close()
+    return row["value"] if row else default
+
+
+def set_meta(key: str, value: str, db_path: str = DB_PATH):
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    cursor.execute("""
+        INSERT INTO system_meta (key, value, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+    """, (key, value, now_str))
+    conn.commit()
+    conn.close()
+
+
+def sync_emails_from_gmail(db_path: str = DB_PATH) -> Tuple[int, str]:
+    """Gmail IMAP üzerinden son e-postaları senkronize eder ve veritabanını günceller."""
+    import imaplib
+    import email
+    from email.header import decode_header
+    from email.utils import parsedate_to_datetime
+
+    mail = imaplib.IMAP4_SSL("imap.gmail.com")
+    pwd = "ijxz xjsk elcx xtmt".replace(" ", "")
+    mail.login("atilbilge@gmail.com", pwd)
+
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT ae.email, ae.agency_id, a.name 
+        FROM agency_emails ae 
+        JOIN agencies a ON ae.agency_id = a.id
+    """)
+    email_map = {}
+    for r in cursor.fetchall():
+        email_map[r["email"].lower()] = (r["agency_id"], r["name"])
+
+    def decode_mime(header_val):
+        if not header_val:
+            return ""
+        parts = decode_header(header_val)
+        decoded = ""
+        for content, enc in parts:
+            if isinstance(content, bytes):
+                decoded += content.decode(enc or "utf-8", errors="ignore")
+            else:
+                decoded += content
+        return decoded
+
+    def get_body(msg):
+        if msg.is_multipart():
+            for part in msg.walk():
+                ctype = part.get_content_type()
+                cdisp = str(part.get("Content-Disposition"))
+                if ctype == "text/plain" and "attachment" not in cdisp:
+                    return part.get_payload(decode=True).decode("utf-8", errors="ignore")
+                elif ctype == "text/html" and "attachment" not in cdisp:
+                    return part.get_payload(decode=True).decode("utf-8", errors="ignore")
+        else:
+            return msg.get_payload(decode=True).decode("utf-8", errors="ignore")
+        return ""
+
+    new_count = 0
+
+    # 1. INBOX
+    mail.select("INBOX")
+    status, data = mail.search(None, "ALL")
+    nums = data[0].split()[-30:] if (data and data[0]) else []
+    for num in nums:
+        status, msg_data = mail.fetch(num, "(RFC822)")
+        msg = email.message_from_bytes(msg_data[0][1])
+        frm = decode_mime(msg.get("From"))
+        to = decode_mime(msg.get("To"))
+        subj = decode_mime(msg.get("Subject"))
+        dt_hdr = msg.get("Date")
+        if not dt_hdr:
+            continue
+        dt = parsedate_to_datetime(dt_hdr)
+        iso_date = dt.isoformat()
+
+        from_addr = ""
+        if "<" in frm and ">" in frm:
+            from_addr = frm.split("<")[1].split(">")[0].strip().lower()
+        else:
+            from_addr = frm.strip().lower()
+
+        if from_addr in email_map:
+            agency_id, agency_name = email_map[from_addr]
+            body = get_body(msg).strip()
+
+            cursor.execute("SELECT id FROM communications WHERE agency_id = ? AND date = ?", (agency_id, iso_date))
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO communications (agency_id, sender, recipient, message, channel, status, date)
+                    VALUES (?, ?, ?, ?, 'EMAIL', 'RESPONDED', ?)
+                """, (agency_id, frm, to, body, iso_date))
+                cursor.execute("UPDATE agencies SET status = 'RESPONDED' WHERE id = ?", (agency_id,))
+                new_count += 1
+
+    # 2. SENT MAIL
+    mail.select('"[Gmail]/G&APY-nderilmi&AV8- Postalar"')
+    status, data = mail.search(None, "ALL")
+    nums = data[0].split()[-30:] if (data and data[0]) else []
+    for num in nums:
+        status, msg_data = mail.fetch(num, "(RFC822)")
+        msg = email.message_from_bytes(msg_data[0][1])
+        frm = decode_mime(msg.get("From"))
+        to = decode_mime(msg.get("To"))
+        subj = decode_mime(msg.get("Subject"))
+        dt_hdr = msg.get("Date")
+        if not dt_hdr:
+            continue
+        dt = parsedate_to_datetime(dt_hdr)
+        iso_date = dt.isoformat()
+
+        to_addr = ""
+        if "<" in to and ">" in to:
+            to_addr = to.split("<")[1].split(">")[0].strip().lower()
+        else:
+            to_addr = to.strip().lower()
+
+        if to_addr in email_map and subj.lower().startswith("re:"):
+            agency_id, agency_name = email_map[to_addr]
+            body = get_body(msg).strip()
+
+            cursor.execute("SELECT id FROM communications WHERE agency_id = ? AND date = ?", (agency_id, iso_date))
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO communications (agency_id, sender, recipient, message, channel, status, date)
+                    VALUES (?, ?, ?, ?, 'EMAIL', 'SENT', ?)
+                """, (agency_id, frm, to, body, iso_date))
+                new_count += 1
+
+    now_iso = datetime.now().isoformat()
+    cursor.execute("""
+        INSERT INTO system_meta (key, value, updated_at)
+        VALUES ('last_email_sync', ?, ?)
+        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+    """, (now_iso, now_iso))
+
+    conn.commit()
+    conn.close()
+    return new_count, now_iso
+
+
 def get_db_stats(db_path: str = DB_PATH) -> Dict[str, Any]:
     """Veritabanı özet istatistiklerini döner."""
     conn = get_connection(db_path)
@@ -400,6 +562,10 @@ def get_db_stats(db_path: str = DB_PATH) -> Dict[str, Any]:
     cursor.execute("SELECT city, COUNT(*) as count FROM agencies GROUP BY city ORDER BY count DESC LIMIT 10;")
     city_counts = {row['city']: row['count'] for row in cursor.fetchall()}
 
+    cursor.execute("SELECT value FROM system_meta WHERE key = 'last_email_sync';")
+    sync_row = cursor.fetchone()
+    last_email_sync = sync_row['value'] if sync_row else None
+
     conn.close()
     return {
         "total_agencies": total_agencies,
@@ -408,7 +574,8 @@ def get_db_stats(db_path: str = DB_PATH) -> Dict[str, Any]:
         "total_websites": total_websites,
         "total_communications": total_comms,
         "status_distribution": status_counts,
-        "top_cities": city_counts
+        "top_cities": city_counts,
+        "last_email_sync": last_email_sync
     }
 
 
