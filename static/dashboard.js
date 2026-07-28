@@ -418,42 +418,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
             comms.forEach(comm => {
                 const card = document.createElement('div');
-                card.className = 'comm-feed-card';
-                card.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; cursor: pointer; transition: transform 0.2s, border-color 0.2s;';
-                
-                card.addEventListener('click', () => {
-                    if (comm.agency_id) {
-                        openAgencyModal(comm.agency_id);
-                    }
-                });
+                card.className = 'comm-feed-card collapsed';
+                card.style.cssText = 'background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; transition: all 0.25s ease;';
 
                 const formattedDate = new Date(comm.date).toLocaleString('tr-TR', {
                     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
 
-                const feedMessageContent = (comm.message.includes('<!DOCTYPE') || comm.message.includes('<html') || comm.message.includes('<table'))
-                    ? `<iframe srcdoc="${comm.message.replace(/"/g, '&quot;')}" style="width: 100%; height: 350px; border: 1px solid var(--border-color); border-radius: 8px; background: #ffffff; margin-top: 8px;" frameborder="0"></iframe>`
-                    : `<div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm);">${comm.message}</div>`;
+                const isHtmlEmail = comm.message.includes('<!DOCTYPE') || comm.message.includes('<html') || comm.message.includes('<table');
+                const fullMessageHtml = isHtmlEmail
+                    ? `<iframe srcdoc="${comm.message.replace(/"/g, '&quot;')}" style="width: 100%; height: 380px; border: 1px solid var(--border-color); border-radius: 8px; background: #ffffff; margin-top: 8px;" frameborder="0"></iframe>`
+                    : `<div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm); margin-top: 8px;">${comm.message}</div>`;
+
+                let snippet = comm.message.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+                if (snippet.length > 140) snippet = snippet.substring(0, 140) + '...';
 
                 card.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div class="comm-card-header" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                         <div>
                             <strong style="color: var(--text-primary); font-size: 1rem;">${comm.agency_name}</strong>
                             <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">(${comm.agency_city || 'Şehir Yok'})</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span class="status-tag tag-${comm.status.toLowerCase()}">${comm.status}</span>
-                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); openAgencyModal(${comm.agency_id});">
+                            <button class="btn btn-sm btn-secondary btn-toggle-expand" title="Detayı Aç/Kapat">
+                                <i class="fa-solid fa-chevron-down icon-arrow"></i> <span class="expand-text">Detayı Göster</span>
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); openAgencyModal(${comm.agency_id});" title="Acente Zaman Çizelgesi">
                                 <i class="fa-solid fa-clock-rotate-left"></i> Zaman Çizelgesi
                             </button>
                         </div>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; margin-bottom: 0.5rem;">
                         <span><i class="fa-solid fa-user"></i> ${comm.sender} &rarr; ${comm.recipient}</span>
                         <span style="margin-left: 1rem;"><i class="fa-regular fa-clock"></i> ${formattedDate} (${comm.channel})</span>
                     </div>
-                    ${feedMessageContent}
+                    <div class="comm-card-snippet" style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.4; font-style: italic; background: rgba(42,161,152,0.06); padding: 0.5rem 0.75rem; border-radius: 6px; border-left: 3px solid var(--accent-indigo); cursor: pointer;">
+                        ${snippet || 'Mesaj içeriği'}
+                    </div>
+                    <div class="comm-card-body" style="display: none; margin-top: 0.75rem;">
+                        ${fullMessageHtml}
+                    </div>
                 `;
+
+                const toggleBtn = card.querySelector('.btn-toggle-expand');
+                const headerEl = card.querySelector('.comm-card-header');
+                const snippetEl = card.querySelector('.comm-card-snippet');
+                const bodyEl = card.querySelector('.comm-card-body');
+                const arrowIcon = card.querySelector('.icon-arrow');
+                const expandText = card.querySelector('.expand-text');
+
+                const toggleCard = (e) => {
+                    if (e) e.stopPropagation();
+                    const isCollapsed = card.classList.contains('collapsed');
+                    if (isCollapsed) {
+                        card.classList.remove('collapsed');
+                        card.classList.add('expanded');
+                        bodyEl.style.display = 'block';
+                        snippetEl.style.display = 'none';
+                        arrowIcon.className = 'fa-solid fa-chevron-up icon-arrow';
+                        expandText.textContent = 'Daralt';
+                    } else {
+                        card.classList.add('collapsed');
+                        card.classList.remove('expanded');
+                        bodyEl.style.display = 'none';
+                        snippetEl.style.display = 'block';
+                        arrowIcon.className = 'fa-solid fa-chevron-down icon-arrow';
+                        expandText.textContent = 'Detayı Göster';
+                    }
+                };
+
+                headerEl.addEventListener('click', toggleCard);
+                snippetEl.addEventListener('click', toggleCard);
+                toggleBtn.addEventListener('click', toggleCard);
+
                 commsFeedList.appendChild(card);
             });
 
@@ -676,6 +714,28 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 if (syncIcon) syncIcon.classList.remove('fa-spin');
             }
+        });
+    }
+
+    // Global Expand All / Collapse All Handlers
+    const btnExpandAll = document.getElementById('btn-expand-all');
+    const btnCollapseAll = document.getElementById('btn-collapse-all');
+
+    if (btnExpandAll) {
+        btnExpandAll.addEventListener('click', () => {
+            document.querySelectorAll('.comm-feed-card.collapsed').forEach(card => {
+                const toggleBtn = card.querySelector('.btn-toggle-expand');
+                if (toggleBtn) toggleBtn.click();
+            });
+        });
+    }
+
+    if (btnCollapseAll) {
+        btnCollapseAll.addEventListener('click', () => {
+            document.querySelectorAll('.comm-feed-card.expanded').forEach(card => {
+                const toggleBtn = card.querySelector('.btn-toggle-expand');
+                if (toggleBtn) toggleBtn.click();
+            });
         });
     }
 
