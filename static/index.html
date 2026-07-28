@@ -230,14 +230,39 @@
                 <div id="view-comms" class="tab-view">
                     <div class="section-header">
                         <h3>Tüm İletişim Akışı (Canlı Zaman Çizelgesi)</h3>
-                        <div class="filter-group">
-                            <label><i class="fa-solid fa-filter"></i> Kanal:</label>
-                            <select id="filter-comm-channel" class="custom-select">
-                                <option value="">Tüm Kanallar</option>
-                                <option value="EMAIL">E-posta (EMAIL)</option>
-                                <option value="NEKRETNINE_FORM">Web Formu (NEKRETNINE_FORM)</option>
-                                <option value="PHONE">Telefon (PHONE)</option>
-                            </select>
+                        <div class="filters-wrapper" style="flex-wrap: wrap;">
+                            <div class="filter-group">
+                                <label><i class="fa-solid fa-filter"></i> Kanal:</label>
+                                <select id="filter-comm-channel" class="custom-select">
+                                    <option value="">Tüm Kanallar</option>
+                                    <option value="EMAIL">E-posta (EMAIL)</option>
+                                    <option value="EMAIL_CORRECTION">Düzeltme E-postası (EMAIL_CORRECTION)</option>
+                                    <option value="NEKRETNINE_FORM">Web Formu (NEKRETNINE_FORM)</option>
+                                    <option value="PHONE">Telefon (PHONE)</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label><i class="fa-regular fa-calendar-days"></i> Tarih Periyodu:</label>
+                                <select id="filter-comm-period" class="custom-select">
+                                    <option value="">Tüm Zamanlar</option>
+                                    <option value="today">Bugün</option>
+                                    <option value="yesterday">Dün</option>
+                                    <option value="3days">Son 3 Gün</option>
+                                    <option value="7days">Son 7 Gün</option>
+                                    <option value="30days">Son 30 Gün</option>
+                                    <option value="custom">Özel Tarih Aralığı...</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group" id="custom-date-container" style="display: none;">
+                                <label><i class="fa-regular fa-calendar"></i> Başlangıç - Bitiş:</label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="date" id="filter-comm-start-date" class="custom-select" style="padding: 0.4rem 0.6rem;">
+                                    <span style="color: var(--text-muted);">-</span>
+                                    <input type="date" id="filter-comm-end-date" class="custom-select" style="padding: 0.4rem 0.6rem;">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -401,6 +426,6 @@
     </div>
 
     <!-- Dashboard JS -->
-    <script src="/static/dashboard.js?v=11"></script>
+    <script src="/static/dashboard.js?v=12"></script>
 </body>
 </html>

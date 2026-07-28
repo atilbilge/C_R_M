@@ -343,17 +343,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 4. İletişim Akışı (Feed View)
+    const filterCommPeriodSelect = document.getElementById('filter-comm-period');
+    const customDateContainer = document.getElementById('custom-date-container');
+    const filterCommStartDate = document.getElementById('filter-comm-start-date');
+    const filterCommEndDate = document.getElementById('filter-comm-end-date');
+
+    if (filterCommPeriodSelect) {
+        filterCommPeriodSelect.addEventListener('change', () => {
+            if (filterCommPeriodSelect.value === 'custom') {
+                customDateContainer.style.display = 'flex';
+            } else {
+                customDateContainer.style.display = 'none';
+            }
+            loadCommunicationsFeed();
+        });
+    }
+
+    if (filterCommStartDate) filterCommStartDate.addEventListener('change', loadCommunicationsFeed);
+    if (filterCommEndDate) filterCommEndDate.addEventListener('change', loadCommunicationsFeed);
+
     async function loadCommunicationsFeed() {
         commsFeedList.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Akış yükleniyor...</p>';
         const channel = filterCommChannel ? filterCommChannel.value : '';
+        const period = filterCommPeriodSelect ? filterCommPeriodSelect.value : '';
+        const startDate = filterCommStartDate ? filterCommStartDate.value : '';
+        const endDate = filterCommEndDate ? filterCommEndDate.value : '';
 
         try {
-            const res = await fetch(`/api/communications?channel=${channel}`);
+            const params = new URLSearchParams();
+            if (channel) params.append('channel', channel);
+            if (period) params.append('period', period);
+            if (startDate) params.append('start_date', startDate);
+            if (endDate) params.append('end_date', endDate);
+
+            const res = await fetch(`/api/communications?${params.toString()}`);
             const comms = await res.json();
 
             commsFeedList.innerHTML = '';
             if (!comms || comms.length === 0) {
-                commsFeedList.innerHTML = '<p style="color: var(--text-muted); padding: 2rem; text-align: center;">İletişim kaydı bulunamadı.</p>';
+                commsFeedList.innerHTML = '<p style="color: var(--text-muted); padding: 2rem; text-align: center;">Seçilen kriterlere uygun iletişim kaydı bulunamadı.</p>';
                 return;
             }
 

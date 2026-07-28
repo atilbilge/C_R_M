@@ -7,6 +7,7 @@ Stanomer Acente CRM - Web Dashboard Backend (Flask API)
 
 import os
 import sys
+from datetime import datetime, timedelta
 from flask import Flask, jsonify, request, send_from_directory
 import db
 
@@ -193,6 +194,9 @@ def get_all_communications():
     """Tüm İletişim Akışı (Feed)"""
     channel = request.args.get("channel", "").strip()
     status = request.args.get("status", "").strip()
+    period = request.args.get("period", "").strip()
+    start_date = request.args.get("start_date", "").strip()
+    end_date = request.args.get("end_date", "").strip()
     
     conn = db.get_connection()
     cursor = conn.cursor()
@@ -210,8 +214,40 @@ def get_all_communications():
     if status:
         sql += " AND c.status = ?"
         params.append(status)
+
+    now = datetime.now()
+
+    if period == "today":
+        today_str = now.strftime("%Y-%m-%d")
+        sql += " AND c.date >= ?"
+        params.append(today_str)
+    elif period == "yesterday":
+        yesterday_str = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+        today_str = now.strftime("%Y-%m-%d")
+        sql += " AND c.date >= ? AND c.date < ?"
+        params.append(yesterday_str)
+        params.append(today_str)
+    elif period == "3days":
+        dt_str = (now - timedelta(days=3)).strftime("%Y-%m-%d")
+        sql += " AND c.date >= ?"
+        params.append(dt_str)
+    elif period == "7days":
+        dt_str = (now - timedelta(days=7)).strftime("%Y-%m-%d")
+        sql += " AND c.date >= ?"
+        params.append(dt_str)
+    elif period == "30days":
+        dt_str = (now - timedelta(days=30)).strftime("%Y-%m-%d")
+        sql += " AND c.date >= ?"
+        params.append(dt_str)
+    elif period == "custom" or (start_date or end_date):
+        if start_date:
+            sql += " AND c.date >= ?"
+            params.append(f"{start_date}T00:00:00")
+        if end_date:
+            sql += " AND c.date <= ?"
+            params.append(f"{end_date}T23:59:59")
         
-    sql += " ORDER BY c.date DESC LIMIT 200;"
+    sql += " ORDER BY c.date DESC;"
     cursor.execute(sql, params)
     comms = [dict(r) for r in cursor.fetchall()]
     conn.close()
