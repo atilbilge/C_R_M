@@ -81,68 +81,158 @@ def extract_company_links_from_search_page(html_text: str) -> List[str]:
 
 
 def parse_company_detail_page(url: str, html_text: str) -> Dict[str, any]:
-    """Firma detay sayfasındaki tüm kurumsal verileri ayrıştırır."""
-    # 1. Unvan
+    """Firma detay sayfasındaki tüm kurumsal ve finansal verileri ayrıştırır (JSON-LD + DOM)."""
+    res = {
+        "name": "",
+        "long_name": "",
+        "establishment_date": "",
+        "enterprise_size": "",
+        "activity": "",
+        "pib": "",
+        "mb": "",
+        "city": "",
+        "address": "",
+        "phones": set(),
+        "emails": set(),
+        "websites": set(),
+        "employees_3yr": {},
+        "income_3yr": {},
+        "companywall_url": url
+    }
+
+    # 1. Unvan (H1)
     title_match = re.search(r'itemprop=["\']name["\'][^>]*>(.*?)</h1>', html_text, re.DOTALL)
     if not title_match:
         title_match = re.search(r'<h1[^>]*>(.*?)</h1>', html_text, re.DOTALL)
     name = re.sub(r'<[^>]+>', '', title_match.group(1)).strip() if title_match else ""
-    name = html.unescape(name)
+    res["name"] = html.unescape(name)
 
-    # 2. Adres & Şehir
-    street_match = re.search(r'itemprop=["\']streetAddress["\'][^>]*>(.*?)</span>', html_text, re.DOTALL)
-    locality_match = re.search(r'itemprop=["\']addressLocality["\'][^>]*>(.*?)</span>', html_text, re.DOTALL)
+    # 2. Yöntem 1: JSON Scriptleri (FAQPage, LocalBusiness, Dataset)
+    scripts = re.findall(r'<script[^>]*>(.*?)</script>', html_text, re.DOTALL)
+    for s in scripts:
+        s_strip = s.strip()
+        if s_strip.startswith('{') and s_strip.endswith('}'):
+            try:
+                data = json.loads(s_strip)
+                t = data.get('@type')
+                if t == 'LocalBusiness':
+                    if data.get('name') and not res['long_name']:
+                        res['long_name'] = html.unescape(data['name'])
+                    addr = data.get('address', {})
+                    if isinstance(addr, dict):
+                        if addr.get('addressLocality') and not res['city']:
+                            res['city'] = html.unescape(addr['addressLocality'])
+                        if addr.get('streetAddress') and not res['address']:
+                            res['address'] = html.unescape(addr['streetAddress'])
+                    if data.get('telephone'):
+                        ph_clean = re.sub(r'[^\d+]', '', data['telephone'])
+                        if len(ph_clean) >= 8:
+                            res['phones'].add(data['telephone'].strip())
+                elif t == 'FAQPage':
+                    for entity in data.get('mainEntity', []):
+                        q = entity.get('name', '').lower()
+                        ans = entity.get('acceptedAnswer', {}).get('text', '')
+                        if ('datum osnivanja' in q or 'osnovan' in q) and not res['establishment_date']:
+                            dm = re.search(r'\b(\d{1,2}\.\d{1,2}\.\d{4}\.?)', ans)
+                            if dm: res['establishment_date'] = dm.group(1)
+                elif t == 'Dataset':
+                    for d in data.get('data', []):
+                        yr = str(d.get('Godina') or d.get('Year') or '')
+                        inc = d.get('Ukupni prihodi') or d.get('Total income')
+                        if yr and inc:
+                            res['income_3yr'][yr] = str(inc).strip()
+            except Exception:
+                pass
 
-    street = re.sub(r'<[^>]+>', '', street_match.group(1)).strip() if street_match else ""
-    city = re.sub(r'<[^>]+>', '', locality_match.group(1)).strip() if locality_match else ""
+    # 3. Yöntem 2: DOM dt/dd Çiftleri (Basic Information & Contacts)
+    dls = re.findall(r'<dt[^>]*>(.*?)</dt>\s*<dd[^>]*>(.*?)</dd>', html_text, re.DOTALL)
+    for dt, dd in dls:
+        c_dt = html.unescape(re.sub(r'<[^>]+>', '', dt)).strip()
+        c_dd = html.unescape(re.sub(r'<[^>]+>', '', dd)).strip()
+        c_dt_lower = c_dt.lower()
 
-    address = f"{street}, {city}".strip(", ") if street or city else ""
+        if ('puno' in c_dt_lower or 'long name' in c_dt_lower or c_dt_lower == 'naziv') and not res['long_name']:
+            res['long_name'] = c_dd
+        elif ('datum osnivanja' in c_dt_lower or 'establishment' in c_dt_lower) and not res['establishment_date']:
+            res['establishment_date'] = c_dd
+        elif 'veli' in c_dt_lower or 'size' in c_dt_lower:
+            res['enterprise_size'] = c_dd
+        elif 'delatnost' in c_dt_lower or 'activity' in c_dt_lower:
+            res['activity'] = c_dd
+        elif 'pib' in c_dt_lower and not res['pib']:
+            m = re.search(r'\d{8,9}', c_dd)
+            if m: res['pib'] = m.group(0)
+        elif ('mb' in c_dt_lower or 'matični' in c_dt_lower) and not res['mb']:
+            m = re.search(r'\d{7,8}', c_dd)
+            if m: res['mb'] = m.group(0)
+        elif 'web' in c_dt_lower:
+            found_urls = re.findall(r'(?:https?://)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:/[^\s"<>]*)?', dd)
+            for w in found_urls:
+                w_clean = w.strip().rstrip('.')
+                if not any(ign in w_clean.lower() for ign in ['companywall', 'facebook', 'google', 'sentry', 'w3.org', 'schema.org']):
+                    full_w = w_clean if w_clean.startswith('http') else 'https://' + w_clean
+                    res['websites'].add(full_w)
+        elif 'mail' in c_dt_lower:
+            found_emails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', dd)
+            for em in found_emails:
+                em_clean = em.lower().strip()
+                if not any(ign in em_clean for ign in ['companywall', 'facebook', 'google', 'sentry', 'w3.org']):
+                    res['emails'].add(em_clean)
 
-    # 3. PIB & MB
-    pib_match = re.search(r'itemprop=["\']vatID["\'][^>]*>(.*?)</span>', html_text, re.DOTALL)
-    if not pib_match:
-        pib_match = re.search(r'PIB[^<]*</span>\s*<span[^>]*>(\d+)', html_text, re.IGNORECASE)
-    pib = re.sub(r'<[^>]+>', '', pib_match.group(1)).strip() if pib_match else ""
+    # 4. Fallback PIB / MB
+    if not res['pib']:
+        pib_match = re.search(r'itemprop=["\']vatID["\'][^>]*>(.*?)</span>', html_text, re.DOTALL)
+        if not pib_match:
+            pib_match = re.search(r'PIB[^<]*</span>\s*<span[^>]*>(\d+)', html_text, re.IGNORECASE)
+        res['pib'] = re.sub(r'<[^>]+>', '', pib_match.group(1)).strip() if pib_match else ""
 
-    mb_match = re.search(r'MB[^<]*</span>\s*<span>(\d+)</span>', html_text, re.IGNORECASE)
-    if not mb_match:
-        mb_match = re.search(r'Matični broj:[^\d]*(\d+)', html_text, re.IGNORECASE)
-    mb = re.sub(r'<[^>]+>', '', mb_match.group(1)).strip() if mb_match else ""
+    if not res['mb']:
+        mb_match = re.search(r'MB[^<]*</span>\s*<span>(\d+)</span>', html_text, re.IGNORECASE)
+        if not mb_match:
+            mb_match = re.search(r'Matični broj:[^\d]*(\d+)', html_text, re.IGNORECASE)
+        res['mb'] = re.sub(r'<[^>]+>', '', mb_match.group(1)).strip() if mb_match else ""
 
-    # 4. Telefon Numaraları
-    phones = set()
+    # 5. 3 Yıllık Çalışan ve Finansal Tablo (table.document-detail-inline & data-title)
+    tbl_match = re.search(r'<table[^>]*class=["\'][^"\']*document-detail-inline[^"\']*["\'][^>]*>(.*?)</table>', html_text, re.DOTALL)
+    if tbl_match:
+        tbl_html = tbl_match.group(1)
+        rows = re.findall(r'<tr[^>]*>(.*?)</tr>', tbl_html, re.DOTALL)
+        for r in rows:
+            label_match = re.search(r'<span[^>]*>(.*?)</span>', r, re.DOTALL)
+            if not label_match: continue
+            label = html.unescape(re.sub(r'<[^>]+>', '', label_match.group(1))).strip().lower()
+
+            val_tds = re.findall(r'<td[^>]*data-title=["\'](\d{4})["\'][^>]*>(.*?)</td>', r, re.DOTALL)
+            for yr, val_raw in val_tds:
+                val = html.unescape(re.sub(r'<[^>]+>', '', val_raw)).strip()
+                if label == 'broj zaposlenih' or label == 'number of employees':
+                    res['employees_3yr'][yr] = val
+                elif label == 'ukupni prihodi' or label == 'total income':
+                    res['income_3yr'][yr] = val
+
+    # 6. Genel Sayfa Telefon & E-posta Taraması
     for p in re.findall(r'(?:\+381|0)[0-9\s/\-]{7,15}', html_text):
         cleaned_phone = re.sub(r'[^\d+]', '', p)
         if len(cleaned_phone) >= 8 and not cleaned_phone.startswith("000"):
-            phones.add(p.strip())
+            res['phones'].add(p.strip())
 
-    # 5. E-Posta Adresleri
-    raw_emails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', html_text)
-    emails = set()
-    for e in raw_emails:
+    for e in re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', html_text):
         el = e.lower().strip()
         if not any(ign in el for ign in ['companywall', 'facebook', 'google', 'sentry', 'w3.org', 'schema.org']):
-            emails.add(el)
+            res['emails'].add(el)
 
-    return {
-        "name": name,
-        "address": address,
-        "city": city,
-        "pib": pib,
-        "mb": mb,
-        "phones": list(phones),
-        "emails": list(emails),
-        "companywall_url": url
-    }
+    return res
 
 
 def crawl_companywall(max_pages: int = 10, delay_range: Tuple[float, float] = (1.0, 2.0)):
     """CompanyWall sayfalarını sırayla taranıp acenteler.db veritabanına aktarılır."""
+    import json
     db.init_db()
 
     total_added = 0
     total_emails = 0
     total_phones = 0
+    total_websites = 0
 
     page = 1
     while True:
@@ -186,6 +276,16 @@ def crawl_companywall(max_pages: int = 10, delay_range: Tuple[float, float] = (1
                 profile_url=company_data["companywall_url"]
             )
 
+            # Zengin Kurumsal/Finansal Bilgileri Güncelle
+            db.update_agency_rich_info(
+                agency_id=agency_id,
+                long_name=company_data["long_name"],
+                establishment_date=company_data["establishment_date"],
+                enterprise_size=company_data["enterprise_size"],
+                employees_json=json.dumps(company_data["employees_3yr"], ensure_ascii=False) if company_data["employees_3yr"] else "",
+                income_json=json.dumps(company_data["income_3yr"], ensure_ascii=False) if company_data["income_3yr"] else ""
+            )
+
             # Telefonları Ekle
             for ph in company_data["phones"]:
                 db.add_agency_phone(agency_id, ph)
@@ -196,8 +296,15 @@ def crawl_companywall(max_pages: int = 10, delay_range: Tuple[float, float] = (1
                 db.add_agency_email(agency_id, em)
                 total_emails += 1
 
+            # Resmi Web Sitelerini Ekle
+            for web_url in company_data["websites"]:
+                db.add_agency_website(agency_id, web_url, site_type="website")
+                total_websites += 1
+
             total_added += 1
-            logger.info(f"  [{idx}/{len(company_links)}] {name} (PIB: {company_data['pib'] or '-'}, Şehir: {company_data['city'] or '-'}) -> DB ID: {agency_id}")
+            emp_info = company_data["employees_3yr"]
+            inc_info = company_data["income_3yr"]
+            logger.info(f"  [{idx}/{len(company_links)}] {name} (Long: {company_data['long_name'] or '-'}, Kur: {company_data['establishment_date'] or '-'}, Çalışan: {emp_info or '-'}) -> DB ID: {agency_id}")
 
             time.sleep(random.uniform(*delay_range))
 
@@ -208,6 +315,8 @@ def crawl_companywall(max_pages: int = 10, delay_range: Tuple[float, float] = (1
     logger.info(f"İşlenen Firma Sayısı: {total_added}")
     logger.info(f"Eklenen E-Postalar  : {total_emails}")
     logger.info(f"Eklenen Telefonlar  : {total_phones}")
+    logger.info(f"Eklenen Web Siteleri : {total_websites}")
+    logger.info(f"=======================================================\n")
     logger.info(f"=======================================================\n")
 
 

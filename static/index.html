@@ -43,9 +43,20 @@
                     <i class="fa-solid fa-comments"></i>
                     <span>İletişim Akışı</span>
                 </a>
+                <a href="#" class="nav-item" data-target="view-campaigns" id="nav-campaigns">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>E-posta Kampanyaları</span>
+                </a>
                 <a href="#" class="nav-item" data-target="view-referrals" id="nav-referrals">
                     <i class="fa-solid fa-diagram-project"></i>
                     <span>Referans Sistemi</span>
+                </a>
+                <a href="#" class="nav-item" data-target="view-unsubscribes" id="nav-unsubscribes">
+                    <i class="fa-solid fa-user-slash"></i>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+                        <span>Abonelikten Çıkanlar</span>
+                        <small id="unsubscribes-menu-count" style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal; margin-top: 2px;">0 Adres</small>
+                    </div>
                 </a>
             </nav>
 
@@ -185,7 +196,20 @@
                                     <button class="pill pill-responded" data-status="RESPONDED">Yanıt Verdi</button>
                                     <button class="pill pill-contacted" data-status="CONTACTED">İletişimde</button>
                                     <button class="pill pill-failed" data-status="FAILED">Başarısız</button>
+                                    <button class="pill pill-test" data-status="TEST">Test</button>
                                 </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <label><i class="fa-solid fa-layer-group"></i> Segment:</label>
+                                <select id="filter-segment" class="custom-select">
+                                    <option value="">Tüm Segmentler</option>
+                                    <option value="A-Kurumsal">A-Kurumsal (80+ Çalışan)</option>
+                                    <option value="B-BuyuyenOrta">B-BuyuyenOrta (Büyüyen Orta)</option>
+                                    <option value="C-KuculenOrta">C-KuculenOrta (Küçülen Orta)</option>
+                                    <option value="D-Kucuk">D-Kucuk (1-9 Çalışan)</option>
+                                    <option value="E-Anomali">E-Anomali (0 Çalışan / Verisiz)</option>
+                                </select>
                             </div>
 
                             <div class="filter-group">
@@ -214,11 +238,12 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Acente Adı</th>
+                                    <th>Segment</th>
                                     <th>Şehir / Adres</th>
                                     <th>Statü</th>
                                     <th>İrtibat Numaraları</th>
                                     <th>E-posta</th>
-                                    <th>Referans Kodu</th>
+                                    <th>Kaynak</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
@@ -310,13 +335,92 @@
                     </div>
                 </div>
 
+                <!-- 5. CAMPAIGNS VIEW (E-posta Kampanyaları) -->
+                <div id="view-campaigns" class="tab-view">
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 1.25rem;">E-posta Kampanya Yönetimi</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.25rem;">Özel e-posta konu ve şablonlarıyla hedef kitlelerinize toplu e-posta gönderin.</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-new-campaign">
+                            <i class="fa-solid fa-plus"></i> Yeni Kampanya Oluştur
+                        </button>
+                    </div>
+
+                    <div class="table-card" style="margin-top: 1.5rem;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kampanya Adı</th>
+                                        <th>Dil</th>
+                                        <th>E-posta Konusu</th>
+                                        <th>Gönderen</th>
+                                        <th>Gönderim Durumu</th>
+                                        <th>Oluşturulma Tarihi</th>
+                                        <th style="text-align: right;">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="campaigns-table-body">
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                            <i class="fa-solid fa-spinner fa-spin"></i> Kampanyalar yükleniyor...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. UNSUBSCRIBES VIEW (Abonelikten Çıkanlar) -->
+                <div id="view-unsubscribes" class="tab-view">
+                    <div class="view-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 1.25rem;"><i class="fa-solid fa-user-slash" style="color: #ef4444;"></i> Abonelikten Çıkanlar (Unsubscribe Listesi)</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.25rem;">Kampanya ve bilgilendirme e-postalarından aboneliğini sonlandıran e-posta adresleri. Bu adreslere otomatik kampanya e-postası gönderilmez.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" id="btn-refresh-unsubscribes">
+                            <i class="fa-solid fa-rotate-right"></i> Yenile
+                        </button>
+                        <button class="btn btn-primary" id="btn-sync-supabase-unsubscribes">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Supabase'den Sync Et
+                        </button>
+                        </div>
+                    </div>
+
+                    <div class="table-card" style="margin-top: 1.5rem;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>E-posta Adresi</th>
+                                        <th>İlişkili Acente</th>
+                                        <th>Neden / Kaynak</th>
+                                        <th>Abonelikten Çıkma Tarihi</th>
+                                        <th style="text-align: right;">İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unsubscribes-table-body">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                            <i class="fa-solid fa-spinner fa-spin"></i> Liste yükleniyor...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
 
     <!-- Agency Detail Modal / Drawer -->
     <div class="modal-overlay" id="agency-modal">
-        <div class="modal-container">
+        <div class="modal-container modal-lg" style="max-width: 960px; width: 95%;">
             <div class="modal-header">
                 <div class="modal-title-group">
                     <h2 id="modal-agency-name">Acente Adı</h2>
@@ -326,43 +430,75 @@
             </div>
 
             <div class="modal-body">
-                <div class="agency-meta-card">
-                    <div class="meta-item">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <div>
-                            <label>Şehir & Adres</label>
-                            <p id="modal-agency-address">-</p>
-                        </div>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <div>
-                            <label>Telefon Numaraları</label>
-                            <p id="modal-agency-phones">-</p>
-                        </div>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <div>
-                            <label>E-Posta Adresleri</label>
-                            <p id="modal-agency-emails">-</p>
-                        </div>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fa-solid fa-globe"></i>
-                        <div>
-                            <label>Web / Profil</label>
-                            <p id="modal-agency-websites">-</p>
-                        </div>
-                    </div>
-                    <div class="meta-item ref-box">
-                        <i class="fa-solid fa-qrcode"></i>
-                        <div>
-                            <label>Referans Kodu</label>
-                            <div class="ref-code-wrapper">
-                                <code id="modal-agency-refcode">REF-XXXXXX</code>
-                                <button class="btn-copy" id="btn-copy-ref" title="Kopyala"><i class="fa-regular fa-copy"></i></button>
+                <div class="agency-meta-card" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Satır 1: Şehir, Telefon, E-Mail (3 Kolon) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;">
+                        <div class="meta-item">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <label>Şehir</label>
+                                <p id="modal-agency-address">-</p>
                             </div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <label>Telefon</label>
+                                <p id="modal-agency-phones">-</p>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <label>E-Mail</label>
+                                <p id="modal-agency-emails">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Satır 2: Ref Kod, Uzun İsim, Kuruluş Tarihi (3 Kolon) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+                        <div class="meta-item ref-box">
+                            <i class="fa-solid fa-qrcode"></i>
+                            <div>
+                                <label>Ref Kod</label>
+                                <div class="ref-code-wrapper">
+                                    <code id="modal-agency-refcode">REF-XXXXXX</code>
+                                    <button class="btn-copy" id="btn-copy-ref" title="Kopyala"><i class="fa-regular fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fa-solid fa-id-card"></i>
+                            <div>
+                                <label>Uzun İsim</label>
+                                <p id="modal-agency-longname" style="font-weight: 600; color: var(--text-primary);">-</p>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <div>
+                                <label>Kuruluş Tarihi</label>
+                                <p id="modal-agency-est-size">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Satır 3: Web/Profil (Tek Satır / Geniş) -->
+                    <div class="meta-item" style="border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+                        <i class="fa-solid fa-globe"></i>
+                        <div style="width: 100%;">
+                            <label>Web/Profil</label>
+                            <p id="modal-agency-websites" style="margin-top: 0.2rem; word-break: break-all;">-</p>
+                        </div>
+                    </div>
+
+                    <!-- Satır 4: Trend (Tek Satır / Geniş) -->
+                    <div class="meta-item" style="border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <div style="width: 100%;">
+                            <label>Trend</label>
+                            <div id="modal-agency-financials" style="font-size: 0.85rem; line-height: 1.5; color: #e2e8f0; margin-top: 0.25rem;">-</div>
                         </div>
                     </div>
                 </div>
@@ -437,7 +573,345 @@
         </div>
     </div>
 
+    <!-- Campaign Create/Edit Modal -->
+    <div class="modal-overlay" id="modal-campaign">
+        <div class="modal-container modal-lg" style="max-width: 850px;">
+            <div class="modal-header">
+                <h2 id="modal-campaign-title">Yeni E-posta Kampanyası Oluştur</h2>
+                <button class="modal-close" id="modal-campaign-close">&times;</button>
+            </div>
+            <form id="form-campaign">
+                <input type="hidden" id="campaign-id" value="">
+                <div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="campaign-name">Kampanya Adı (Sistem İçi):</label>
+                            <input type="text" id="campaign-name" class="custom-input" placeholder="örn: Beograd Acenteleri Tanıtım Kampanyası" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="campaign-sender-name">Gönderen Adı (Sender Name):</label>
+                            <input type="text" id="campaign-sender-name" class="custom-input" value="Stanomer Ekibi" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="campaign-lang">Dil Kodu (Language):</label>
+                            <select id="campaign-lang" class="custom-select" required>
+                                <option value="SR_LAT" selected>SR_LAT (Srpski - Latinica)</option>
+                                <option value="SR_CYR">SR_CYR (Српски - Ћирилица)</option>
+                                <option value="EN">EN (English)</option>
+                                <option value="TR">TR (Türkçe)</option>
+                                <option value="RU">RU (Русский)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="campaign-subject" style="margin-bottom: 0.4rem; font-weight: 600; display: block;">E-posta Konusu (Subject):</label>
+                        <input type="text" id="campaign-subject" class="custom-input" placeholder="örn: {{agency_name}} - Unapređenje procesa nakon iznajmljivanja" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label for="campaign-body" style="margin: 0; font-weight: 600;">E-posta Gövdesi (HTML):</label>
+                                <div class="tooltip-wrapper">
+                                    <span style="background: rgba(99, 102, 241, 0.1); color: var(--accent-indigo); font-size: 0.78rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; border: 1px solid rgba(99, 102, 241, 0.2);">
+                                        <i class="fa-solid fa-circle-info"></i> Değişken Rehberi
+                                    </span>
+                                    <div class="tooltip-content">
+                                        <div style="font-weight: 700; color: #818cf8; margin-bottom: 6px; font-size: 0.82rem; border-bottom: 1px solid #334155; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                            <span><i class="fa-solid fa-code"></i> Kullanılabilir Şablon Değişkenleri</span>
+                                            <span style="font-weight: 400; font-size: 0.72rem; color: #94a3b8;">Tıklayarak Kopyala</span>
+                                        </div>
+                                        <div style="margin-bottom: 5px;">
+                                            <code class="tooltip-code-tag" data-copy="{{agency_name}}" title="Kopyalamak için tıkla">{{agency_name}}</code> : Acente Unvanı
+                                        </div>
+                                        <div style="margin-bottom: 5px;">
+                                            <code class="tooltip-code-tag" data-copy="{{city}}" title="Kopyalamak için tıkla">{{city}}</code> : Bulunduğu Şehir
+                                        </div>
+                                        <div style="margin-bottom: 5px;">
+                                            <code class="tooltip-code-tag" data-copy="{{ref_code}}" title="Kopyalamak için tıkla">{{ref_code}}</code> : Referans Kodu
+                                        </div>
+                                        <div style="margin-bottom: 5px;">
+                                            <code class="tooltip-code-tag" data-copy="{{address}}" title="Kopyalamak için tıkla">{{address}}</code> : Açık Adresi
+                                        </div>
+                                        <div>
+                                            <code class="tooltip-code-tag" data-copy="{{unsubscribe_url}}" title="Kopyalamak için tıkla">{{unsubscribe_url}}</code> : Dile ve Alıcıya Özel Link
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Kullanılan Değişkenler Badge & Tooltip -->
+                                <div class="tooltip-wrapper" id="used-vars-wrapper">
+                                    <span id="used-vars-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 0.78rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                        <i class="fa-solid fa-square-check"></i> Kullanılan Değişkenler <span id="used-vars-count" style="font-weight: 700;">(0)</span>
+                                    </span>
+                                    <div class="tooltip-content" id="used-vars-popup" style="width: 320px;">
+                                        <div style="font-weight: 700; color: #34d399; margin-bottom: 6px; font-size: 0.82rem; border-bottom: 1px solid #334155; padding-bottom: 4px; display: flex; align-items: center; gap: 0.3rem;">
+                                            <i class="fa-solid fa-square-check"></i> Şablonda Tespit Edilen Değişkenler
+                                        </div>
+                                        <div id="used-vars-list" style="font-size: 0.78rem; color: #e2e8f0; line-height: 1.6;">
+                                            <span style="color: #94a3b8; font-style: italic;">Henüz hiçbir değişken kullanılmadı.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-campaign-html" style="background: rgba(99, 102, 241, 0.1); color: var(--accent-indigo); border-color: rgba(99, 102, 241, 0.2);">
+                                <i class="fa-solid fa-eye"></i> HTML Canlı Önizle
+                            </button>
+                        </div>
+
+                        <textarea id="campaign-body" class="custom-textarea" rows="10" placeholder="E-posta HTML şablonunu yapıştırın..." required style="font-family: monospace; font-size: 0.85rem; line-height: 1.4;"></textarea>
+                    </div>
+
+                    <!-- Target Audience Filter Section -->
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.2rem; margin-top: 1.2rem;">
+                        <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-filter" style="color: var(--accent-indigo);"></i> Hedef Kitle Filtreleri
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;">
+                            <div>
+                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Şehir Filtresi:</label>
+                                <input type="text" id="camp-filter-city" class="custom-input" placeholder="Tüm Şehirler">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Acente Statüsü:</label>
+                                <select id="camp-filter-status" class="custom-select">
+                                    <option value="">Tüm Statüler</option>
+                                    <option value="NEW" selected>Yeni (NEW)</option>
+                                    <option value="TEST">Test (TEST)</option>
+                                    <option value="SENT">Gönderildi (SENT)</option>
+                                    <option value="CONTACTED">İletişim Kuruldu (CONTACTED)</option>
+                                    <option value="RESPONDED">Yanıt Geldi (RESPONDED)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Acente Segmenti:</label>
+                                <select id="camp-filter-segment" class="custom-select">
+                                    <option value="">Tüm Segmentler</option>
+                                    <option value="A-Kurumsal">A-Kurumsal (80+ Çalışan)</option>
+                                    <option value="B-BuyuyenOrta">B-BuyuyenOrta (Büyüyen)</option>
+                                    <option value="C-KuculenOrta">C-KuculenOrta (Küçülen)</option>
+                                    <option value="D-Kucuk">D-Kucuk (1-9 Çalışan)</option>
+                                    <option value="E-Anomali">E-Anomali (0 Çalışan / Verisiz)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Kaynak / Platform:</label>
+                                <select id="camp-filter-source" class="custom-select">
+                                    <option value="">Tümü</option>
+                                    <option value="companywall">CompanyWall</option>
+                                    <option value="nekretnine">Nekretnine.rs</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; background: rgba(99, 102, 241, 0.05); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(99, 102, 241, 0.15);">
+                            <input type="checkbox" id="camp-filter-exclude-today" checked style="width: 16px; height: 16px; accent-color: var(--accent-indigo); cursor: pointer;">
+                            <label for="camp-filter-exclude-today" style="font-size: 0.83rem; font-weight: 600; color: var(--text-primary); cursor: pointer; margin: 0;">
+                                <i class="fa-solid fa-user-shield" style="color: var(--accent-indigo);"></i> Bugün e-posta gönderilen acenteleri otomatik hariç tut (Varsayılan: Seçili)
+                            </label>
+                        </div>
+
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-calc-audience">
+                                <i class="fa-solid fa-calculator"></i> Hedef Kitleyi Önizle
+                            </button>
+                            <span id="target-audience-count-badge" style="font-size: 0.88rem; font-weight: 600; color: var(--accent-indigo);">
+                                Hedef kitle hesaplanmadı
+                            </span>
+                        </div>
+
+                        <div id="audience-preview-container" style="display: none; margin-top: 0.75rem; max-height: 140px; overflow-y: auto; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.5rem; font-size: 0.8rem;">
+                            <ul id="audience-preview-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.3rem;"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="modal-campaign-cancel">İptal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Kampanyayı Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Campaign Send Modal -->
+    <div class="modal-overlay" id="modal-send-campaign">
+        <div class="modal-container modal-md" style="max-width: 620px;">
+            <div class="modal-header">
+                <h2 id="modal-send-title">E-posta Gönderimi</h2>
+                <button class="modal-close" id="modal-send-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="send-campaign-id" value="">
+                <div id="send-summary-box" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+                    <p style="margin: 0 0 0.4rem 0; font-weight: 700; font-size: 1rem; color: var(--text-primary);" id="send-camp-name">Kampanya Adı</p>
+                    <p style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: var(--text-muted);" id="send-camp-subject">Konu: ...</p>
+                    <div style="font-size: 0.88rem; color: var(--accent-indigo); font-weight: 600;" id="send-camp-audience-info">
+                        Hedef Kitle E-posta Sayısı: <span id="send-total-recipients">0</span>
+                    </div>
+                    <div style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted);" id="send-camp-filters">
+                        Hedef Kitle Kriterleri: Yükleniyor...
+                    </div>
+                </div>
+
+                <!-- Test Email Section -->
+                <div style="border: 1px dashed var(--accent-indigo); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; background: rgba(99, 102, 241, 0.03);">
+                    <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">🧪 Kendi E-postanıza Test Maili Gönderin:</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="email" id="test-email-input" class="custom-input" value="atilbilge@gmail.com" placeholder="test@domain.com">
+                        <button type="button" class="btn btn-secondary" id="btn-send-test-email" style="white-space: nowrap;">
+                            <i class="fa-solid fa-paper-plane"></i> Test Gönder
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Status & Progress Bar -->
+                <div id="send-progress-container" style="display: none; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">
+                        <span id="send-status-text">Gönderiliyor...</span>
+                        <span id="send-progress-pct">0%</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 1rem;">
+                        <div id="send-progress-bar" style="background: var(--accent-indigo); width: 0%; height: 100%; transition: width 0.3s;"></div>
+                    </div>
+
+                    <div id="send-logs-box" style="height: 140px; overflow-y: auto; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.5rem; font-family: monospace; font-size: 0.78rem; color: var(--text-secondary);">
+                        <div>Gönderim günlüğü bekleniyor...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal-send-cancel">Kapat</button>
+                <button type="button" class="btn btn-secondary" id="btn-stop-send" style="background: #ef4444; border-color: #ef4444; color: #fff; display: none;">
+                    <i class="fa-solid fa-hand"></i> Gönderimi Durdur
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-start-real-send" style="background: #10b981; border-color: #10b981;">
+                    <i class="fa-solid fa-paper-plane"></i> Toplu Gönderimi Başlat (Gerçek)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaign Logs & Communication Chain Modal -->
+    <div class="modal-overlay" id="modal-campaign-logs">
+        <div class="modal-container modal-lg" style="max-width: 900px; width: 95%;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <div>
+                    <h2 id="modal-camp-logs-title" style="margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-list-check" style="color: var(--accent-indigo);"></i> Kampanya İletişim Zinciri & Gönderim Geçmişi
+                    </h2>
+                    <p id="modal-camp-logs-subtitle" style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-muted);"></p>
+                </div>
+                <button class="modal-close" id="modal-camp-logs-close">&times;</button>
+            </div>
+            <div class="modal-body" style="padding-top: 1rem;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fa-solid fa-paper-plane" style="font-size: 1.4rem; color: var(--accent-indigo);"></i>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Toplam Gönderilen E-posta</div>
+                            <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);" id="camp-logs-total-sent">0</div>
+                        </div>
+                    </div>
+                    <div style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fa-solid fa-building" style="font-size: 1.4rem; color: #10b981;"></i>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Ulaşılan Acente Sayısı</div>
+                            <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);" id="camp-logs-total-agencies">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                    <input type="text" id="camp-logs-search" class="custom-input" placeholder="Acente adı veya e-posta ile filtrele..." style="max-width: 320px;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);" id="camp-logs-count-info"></span>
+                </div>
+
+                <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+                    <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-secondary); text-align: left; font-size: 0.8rem; color: var(--text-muted);">
+                                <th style="padding: 0.6rem 0.8rem;">Tarih / Saat</th>
+                                <th style="padding: 0.6rem 0.8rem;">Acente Adı</th>
+                                <th style="padding: 0.6rem 0.8rem;">Şehir</th>
+                                <th style="padding: 0.6rem 0.8rem;">Alıcı E-posta</th>
+                                <th style="padding: 0.6rem 0.8rem;">Statü</th>
+                                <th style="padding: 0.6rem 0.8rem; text-align: right;">İçerik</th>
+                            </tr>
+                        </thead>
+                        <tbody id="camp-logs-tbody" style="font-size: 0.83rem;">
+                            <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal-camp-logs-cancel">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email HTML Preview Modal -->
+    <div class="modal-overlay" id="modal-email-preview">
+        <div class="modal-container modal-lg" style="max-width: 920px; width: 95%;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <h2 style="margin: 0; font-size: 1.15rem;"><i class="fa-solid fa-eye" style="color: var(--accent-indigo);"></i> E-posta HTML Canlı Önizleme</h2>
+                </div>
+                <button class="modal-close" id="modal-preview-close">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding: 1rem 1.25rem;">
+                <!-- Controls Bar: Device View & Test Agency Selector -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-secondary); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Cihaz Görünümü:</span>
+                        <div class="btn-group" style="display: inline-flex; gap: 0.25rem;">
+                            <button type="button" class="btn btn-sm btn-secondary active" id="btn-preview-view-desktop" title="Masaüstü (600px)">
+                                <i class="fa-solid fa-desktop"></i> Masaüstü
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" id="btn-preview-view-mobile" title="Mobil (375px)">
+                                <i class="fa-solid fa-mobile-screen-button"></i> Mobil
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" id="btn-preview-view-full" title="Tam Genişlik (%100)">
+                                <i class="fa-solid fa-expand"></i> Tam Genişlik
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="preview-agency-select" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin: 0;">Test Acentesi:</label>
+                        <select id="preview-agency-select" class="custom-select" style="min-width: 220px; font-size: 0.82rem; padding: 0.35rem 0.6rem;">
+                            <option value="0">⚡ Varsayılan Örnek Acente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Email Header Info Card (Subject & Sender) -->
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.85rem;">
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.3rem;">
+                        <strong style="color: var(--text-muted); min-width: 60px;">Konu:</strong>
+                        <span id="preview-subject-display" style="color: var(--text-primary); font-weight: 600;">-</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <strong style="color: var(--text-muted); min-width: 60px;">Alıcı:</strong>
+                        <span id="preview-recipient-display" style="color: var(--text-secondary); font-family: monospace;">-</span>
+                    </div>
+                </div>
+
+                <!-- Frame Wrapper for previewing HTML -->
+                <div id="email-preview-frame-wrapper" style="display: flex; justify-content: center; background: #eef2f6; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem 1rem; min-height: 480px; max-height: 60vh; overflow-y: auto;">
+                    <iframe id="email-preview-iframe" style="width: 600px; height: 500px; border: none; border-radius: 12px; background: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transition: width 0.3s ease;" frameborder="0"></iframe>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal-preview-cancel">Kapat</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard JS -->
-    <script src="/static/dashboard.js?v=19"></script>
+    <script src="/static/dashboard.js?v=20"></script>
 </body>
 </html>

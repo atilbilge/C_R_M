@@ -8,6 +8,7 @@ Acenteler, iletişim bilgileri, iletişim tarihçesi ve referans sistemi için S
 import sqlite3
 import os
 import re
+import json
 import secrets
 import string
 from datetime import datetime
@@ -64,6 +65,34 @@ def init_db(db_path: str = DB_PATH):
         pass
     try:
         cursor.execute("ALTER TABLE agencies ADD COLUMN contact_person TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN long_name TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN establishment_date TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN enterprise_size TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN employees_json TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN income_json TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN segment TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN activity_code TEXT;")
     except sqlite3.OperationalError:
         pass
 
@@ -144,6 +173,46 @@ def init_db(db_path: str = DB_PATH):
     );
     """)
 
+    # 8. E-posta Kampanyaları Tablosu
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS campaigns (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        body_html TEXT NOT NULL,
+        sender_name TEXT DEFAULT 'Stanomer Ekibi',
+        sender_email TEXT DEFAULT 'atilbilge@gmail.com',
+        target_filter_json TEXT DEFAULT '{}',
+        lang TEXT DEFAULT 'SR_LAT',
+        status TEXT DEFAULT 'DRAFT',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
+    # Migration for campaigns.lang
+    try:
+        cursor.execute("ALTER TABLE campaigns ADD COLUMN lang TEXT DEFAULT 'SR_LAT';")
+    except sqlite3.OperationalError:
+        pass
+
+    # Migration for communications.campaign_id
+    try:
+        cursor.execute("ALTER TABLE communications ADD COLUMN campaign_id INTEGER REFERENCES campaigns(id) ON DELETE SET NULL;")
+    except sqlite3.OperationalError:
+        pass
+
+    # 9. Abonelikten Çıkanlar (Unsubscribes) Tablosu
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS unsubscribes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        agency_id INTEGER,
+        reason TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
     # İndeksler
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_agencies_name ON agencies(name);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_agencies_city ON agencies(city);")
@@ -151,6 +220,7 @@ def init_db(db_path: str = DB_PATH):
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_agencies_ref_code ON agencies(ref_code);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_websites_url ON agency_websites(url);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_communications_agency_id ON communications(agency_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_unsubscribes_email ON unsubscribes(email);")
 
     conn.commit()
     conn.close()
@@ -273,6 +343,36 @@ def add_or_get_agency(
     conn.commit()
     conn.close()
     return agency_id
+
+
+def update_agency_rich_info(
+    agency_id: int,
+    long_name: str = "",
+    establishment_date: str = "",
+    enterprise_size: str = "",
+    employees_json: str = "",
+    income_json: str = "",
+    db_path: str = DB_PATH
+):
+    """Acentenin yeni çekilen zengin kurumsal/finansal bilgilerini günceller."""
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT long_name, establishment_date, enterprise_size, employees_json, income_json FROM agencies WHERE id = ?", (agency_id,))
+    curr = cursor.fetchone()
+    if curr:
+        new_long_name = long_name if long_name and not curr['long_name'] else (curr['long_name'] or long_name)
+        new_est_date = establishment_date if establishment_date and not curr['establishment_date'] else (curr['establishment_date'] or establishment_date)
+        new_size = enterprise_size if enterprise_size and not curr['enterprise_size'] else (curr['enterprise_size'] or enterprise_size)
+        new_emp = employees_json if employees_json and not curr['employees_json'] else (curr['employees_json'] or employees_json)
+        new_inc = income_json if income_json and not curr['income_json'] else (curr['income_json'] or income_json)
+
+        cursor.execute("""
+            UPDATE agencies 
+            SET long_name = ?, establishment_date = ?, enterprise_size = ?, employees_json = ?, income_json = ?, updated_at = ?
+            WHERE id = ?
+        """, (new_long_name, new_est_date, new_size, new_emp, new_inc, datetime.now().isoformat(), agency_id))
+        conn.commit()
+    conn.close()
 
 
 def add_agency_phone(agency_id: int, phone: str, db_path: str = DB_PATH):
@@ -406,13 +506,18 @@ def set_meta(key: str, value: str, db_path: str = DB_PATH):
 
 
 def sync_emails_from_gmail(db_path: str = DB_PATH) -> Tuple[int, str]:
-    """Gmail IMAP üzerinden son e-postaları senkronize eder ve veritabanını günceller."""
+    """Gmail IMAP üzerinden e-postaları senkronize eder ve veritabanını günceller."""
     import imaplib
     import email
+    import ssl
     from email.header import decode_header
-    from email.utils import parsedate_to_datetime
+    from email.utils import parsedate_to_datetime, parseaddr
 
-    mail = imaplib.IMAP4_SSL("imap.gmail.com")
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    mail = imaplib.IMAP4_SSL("imap.gmail.com", port=993, ssl_context=ctx)
     pwd = "ijxz xjsk elcx xtmt".replace(" ", "")
     mail.login("atilbilge@gmail.com", pwd)
 
@@ -426,7 +531,9 @@ def sync_emails_from_gmail(db_path: str = DB_PATH) -> Tuple[int, str]:
     """)
     email_map = {}
     for r in cursor.fetchall():
-        email_map[r["email"].lower()] = (r["agency_id"], r["name"])
+        e = r["email"].strip().lower()
+        if e:
+            email_map[e] = (r["agency_id"], r["name"])
 
     def decode_mime(header_val):
         if not header_val:
@@ -453,76 +560,129 @@ def sync_emails_from_gmail(db_path: str = DB_PATH) -> Tuple[int, str]:
             return msg.get_payload(decode=True).decode("utf-8", errors="ignore")
         return ""
 
+    status, mailboxes = mail.list()
+    folders = ["INBOX"]
+    for mb in mailboxes:
+        mb_str = mb.decode()
+        if '\\Sent' in mb_str or 'Sent Mail' in mb_str or 'G&APY-nderilmi' in mb_str:
+            parts = mb_str.split(' "/" ')
+            if len(parts) > 1:
+                folders.append(parts[1].strip())
+        elif '\\All' in mb_str or 'All Mail' in mb_str or 'T&APw-m Postalar' in mb_str:
+            parts = mb_str.split(' "/" ')
+            if len(parts) > 1:
+                folders.append(parts[1].strip())
+
+    seen_f = set()
+    unique_folders = []
+    for f in folders:
+        cf = f.strip('"')
+        if cf not in seen_f:
+            seen_f.add(cf)
+            unique_folders.append(f)
+
     new_count = 0
+    processed_dedup = set()
 
-    # 1. INBOX
-    mail.select("INBOX")
-    status, data = mail.search(None, "ALL")
-    nums = data[0].split()[-30:] if (data and data[0]) else []
-    for num in nums:
-        status, msg_data = mail.fetch(num, "(RFC822)")
-        msg = email.message_from_bytes(msg_data[0][1])
-        frm = decode_mime(msg.get("From"))
-        to = decode_mime(msg.get("To"))
-        subj = decode_mime(msg.get("Subject"))
-        dt_hdr = msg.get("Date")
-        if not dt_hdr:
-            continue
-        dt = parsedate_to_datetime(dt_hdr)
-        iso_date = dt.isoformat()
+    for folder in unique_folders:
+        try:
+            folder_arg = folder if folder.startswith('"') else f'"{folder}"'
+            res, _ = mail.select(folder_arg)
+            if res != "OK":
+                res, _ = mail.select(folder.strip('"'))
+                if res != "OK":
+                    continue
 
-        from_addr = ""
-        if "<" in frm and ">" in frm:
-            from_addr = frm.split("<")[1].split(">")[0].strip().lower()
-        else:
-            from_addr = frm.strip().lower()
+            status, data = mail.search(None, "ALL")
+            if status != "OK" or not data or not data[0]:
+                continue
 
-        if from_addr in email_map:
-            agency_id, agency_name = email_map[from_addr]
-            body = get_body(msg).strip()
+            nums = data[0].split()
+            recent_nums = nums[-150:] if len(nums) > 150 else nums
+            if not recent_nums:
+                continue
 
-            cursor.execute("SELECT id FROM communications WHERE agency_id = ? AND date = ?", (agency_id, iso_date))
-            if not cursor.fetchone():
-                cursor.execute("""
-                    INSERT INTO communications (agency_id, sender, recipient, message, channel, status, date)
-                    VALUES (?, ?, ?, ?, 'EMAIL', 'RESPONDED', ?)
-                """, (agency_id, frm, to, body, iso_date))
-                cursor.execute("UPDATE agencies SET status = 'RESPONDED' WHERE id = ?", (agency_id,))
-                new_count += 1
+            nums_str = b",".join(recent_nums).decode("utf-8")
+            status, fetch_data = mail.fetch(nums_str, "(BODY.PEEK[HEADER.FIELDS (FROM TO SUBJECT DATE)])")
+            if status != "OK" or not fetch_data:
+                continue
 
-    # 2. SENT MAIL
-    mail.select('"[Gmail]/G&APY-nderilmi&AV8- Postalar"')
-    status, data = mail.search(None, "ALL")
-    nums = data[0].split()[-30:] if (data and data[0]) else []
-    for num in nums:
-        status, msg_data = mail.fetch(num, "(RFC822)")
-        msg = email.message_from_bytes(msg_data[0][1])
-        frm = decode_mime(msg.get("From"))
-        to = decode_mime(msg.get("To"))
-        subj = decode_mime(msg.get("Subject"))
-        dt_hdr = msg.get("Date")
-        if not dt_hdr:
-            continue
-        dt = parsedate_to_datetime(dt_hdr)
-        iso_date = dt.isoformat()
+            msg_headers_map = {}
+            for item in fetch_data:
+                if isinstance(item, tuple) and len(item) == 2:
+                    header_info = item[0].decode("utf-8", errors="ignore")
+                    msg_num = header_info.split()[0]
+                    hdr_text = item[1].decode("utf-8", errors="ignore")
+                    msg_headers_map[msg_num] = hdr_text
 
-        to_addr = ""
-        if "<" in to and ">" in to:
-            to_addr = to.split("<")[1].split(">")[0].strip().lower()
-        else:
-            to_addr = to.strip().lower()
+            for num_bytes in recent_nums:
+                num_str = num_bytes.decode("utf-8")
+                if num_str not in msg_headers_map:
+                    continue
 
-        if to_addr in email_map and subj.lower().startswith("re:"):
-            agency_id, agency_name = email_map[to_addr]
-            body = get_body(msg).strip()
+                hdr_text = msg_headers_map[num_str]
+                hdr_msg = email.message_from_string(hdr_text)
 
-            cursor.execute("SELECT id FROM communications WHERE agency_id = ? AND date = ?", (agency_id, iso_date))
-            if not cursor.fetchone():
-                cursor.execute("""
-                    INSERT INTO communications (agency_id, sender, recipient, message, channel, status, date)
-                    VALUES (?, ?, ?, ?, 'EMAIL', 'SENT', ?)
-                """, (agency_id, frm, to, body, iso_date))
-                new_count += 1
+                frm = decode_mime(hdr_msg.get("From"))
+                to = decode_mime(hdr_msg.get("To"))
+                subj = decode_mime(hdr_msg.get("Subject"))
+                dt_hdr = hdr_msg.get("Date")
+
+                _, from_addr = parseaddr(frm)
+                _, to_addr = parseaddr(to)
+
+                from_addr = from_addr.strip().lower()
+                to_addr = to_addr.strip().lower()
+
+                matching_agency = None
+                direction = None
+
+                if from_addr in email_map:
+                    matching_agency = email_map[from_addr]
+                    direction = "RECEIVED"
+                elif to_addr in email_map:
+                    matching_agency = email_map[to_addr]
+                    direction = "SENT"
+
+                if matching_agency:
+                    agency_id, agency_name = matching_agency
+                    
+                    try:
+                        dt = parsedate_to_datetime(dt_hdr)
+                        iso_date = dt.isoformat()
+                    except Exception:
+                        iso_date = dt_hdr or ""
+
+                    dedup_key = f"{agency_id}_{direction}_{iso_date[:16]}"
+                    if dedup_key in processed_dedup:
+                        continue
+                    processed_dedup.add(dedup_key)
+
+                    date_prefix = iso_date[:10] if iso_date else ""
+                    cursor.execute("""
+                        SELECT id FROM communications 
+                        WHERE agency_id = ? AND (date = ? OR date LIKE ?) AND (sender = ? OR recipient = ?)
+                    """, (agency_id, iso_date, f"{date_prefix}%", frm, to))
+
+                    if not cursor.fetchone():
+                        status_full, full_data = mail.fetch(num_bytes, "(RFC822)")
+                        if full_data and full_data[0] and isinstance(full_data[0], tuple):
+                            full_msg = email.message_from_bytes(full_data[0][1])
+                            body = get_body(full_msg).strip()
+                            status_str = "RECEIVED" if direction == "RECEIVED" else "SENT"
+
+                            cursor.execute("""
+                                INSERT INTO communications (agency_id, sender, recipient, message, channel, status, date)
+                                VALUES (?, ?, ?, ?, 'EMAIL', ?, ?)
+                            """, (agency_id, frm, to, body, status_str, iso_date))
+
+                            if direction == "RECEIVED":
+                                cursor.execute("UPDATE agencies SET status = 'RESPONDED' WHERE id = ?", (agency_id,))
+
+                            new_count += 1
+
+        except Exception as e:
+            print(f"Error syncing folder {folder}: {e}")
 
     now_iso = datetime.now().isoformat()
     cursor.execute("""
@@ -533,7 +693,217 @@ def sync_emails_from_gmail(db_path: str = DB_PATH) -> Tuple[int, str]:
 
     conn.commit()
     conn.close()
+    mail.logout()
     return new_count, now_iso
+
+
+def create_campaign(
+    name: str,
+    subject: str,
+    body_html: str,
+    sender_name: str = "Stanomer Ekibi",
+    sender_email: str = "atilbilge@gmail.com",
+    target_filter_json: str = "{}",
+    lang: str = "SR_LAT",
+    db_path: str = DB_PATH
+) -> int:
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    valid_langs = ["TR", "EN", "RU", "SR_LAT", "SR_CYR"]
+    clean_lang = lang.strip().upper() if lang and lang.strip().upper() in valid_langs else "SR_LAT"
+    cursor.execute("""
+        INSERT INTO campaigns (name, subject, body_html, sender_name, sender_email, target_filter_json, lang, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'DRAFT', ?, ?)
+    """, (name.strip(), subject.strip(), body_html.strip(), sender_name.strip(), sender_email.strip(), target_filter_json, clean_lang, now_str, now_str))
+    camp_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return camp_id
+
+
+def get_campaigns(db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM campaigns ORDER BY created_at DESC")
+    rows = cursor.fetchall()
+    result = []
+    for r in rows:
+        c = dict(r)
+        cursor.execute("SELECT COUNT(DISTINCT agency_id) as sent_count FROM communications WHERE campaign_id = ?", (c['id'],))
+        c['sent_count'] = cursor.fetchone()['sent_count']
+        result.append(c)
+    conn.close()
+    return result
+
+
+def get_campaign(campaign_id: int, db_path: str = DB_PATH) -> Optional[Dict[str, Any]]:
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM campaigns WHERE id = ?", (campaign_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return None
+    camp = dict(row)
+    cursor.execute("SELECT COUNT(DISTINCT agency_id) as sent_count FROM communications WHERE campaign_id = ?", (campaign_id,))
+    camp['sent_count'] = cursor.fetchone()['sent_count']
+    conn.close()
+    return camp
+
+
+def update_campaign(
+    campaign_id: int,
+    name: str = None,
+    subject: str = None,
+    body_html: str = None,
+    sender_name: str = None,
+    sender_email: str = None,
+    target_filter_json: str = None,
+    lang: str = None,
+    status: str = None,
+    db_path: str = DB_PATH
+) -> bool:
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+
+    fields = []
+    values = []
+    if name is not None:
+        fields.append("name = ?")
+        values.append(name.strip())
+    if subject is not None:
+        fields.append("subject = ?")
+        values.append(subject.strip())
+    if body_html is not None:
+        fields.append("body_html = ?")
+        values.append(body_html.strip())
+    if sender_name is not None:
+        fields.append("sender_name = ?")
+        values.append(sender_name.strip())
+    if sender_email is not None:
+        fields.append("sender_email = ?")
+        values.append(sender_email.strip())
+    if target_filter_json is not None:
+        fields.append("target_filter_json = ?")
+        values.append(target_filter_json if isinstance(target_filter_json, str) else json.dumps(target_filter_json))
+    if lang is not None:
+        valid_langs = ["TR", "EN", "RU", "SR_LAT", "SR_CYR"]
+        clean_lang = lang.strip().upper() if lang and lang.strip().upper() in valid_langs else "SR_LAT"
+        fields.append("lang = ?")
+        values.append(clean_lang)
+    if status is not None:
+        fields.append("status = ?")
+        values.append(status.strip())
+
+    if not fields:
+        conn.close()
+        return False
+
+    fields.append("updated_at = ?")
+    values.append(datetime.now().isoformat())
+
+    values.append(campaign_id)
+    sql = f"UPDATE campaigns SET {', '.join(fields)} WHERE id = ?"
+    cursor.execute(sql, values)
+    conn.commit()
+    conn.close()
+    return True
+
+
+def delete_campaign(campaign_id: int, db_path: str = DB_PATH) -> bool:
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM campaigns WHERE id = ?", (campaign_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+
+def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """
+    Filtrelere uyan ve e-posta adresi olan hedef acenteleri döner.
+    """
+    if isinstance(target_filter, str):
+        try:
+            target_filter = json.loads(target_filter)
+        except Exception:
+            target_filter = {}
+
+    if not isinstance(target_filter, dict):
+        target_filter = {}
+
+    city = target_filter.get("city", "").strip()
+    status = target_filter.get("status", "").strip()
+    segment = target_filter.get("segment", "").strip()
+    source = target_filter.get("source", "").strip()
+    q = target_filter.get("q", "").strip()
+    
+    exclude_today = target_filter.get("exclude_today", True)
+    if isinstance(exclude_today, str):
+        exclude_today = exclude_today.lower() in ("true", "1", "yes")
+
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+
+    sql = """
+        SELECT DISTINCT a.id, a.name, a.segment, a.city, a.address, a.pib, a.mb, a.status, a.ref_code
+        FROM agencies a
+        JOIN agency_emails e ON a.id = e.agency_id
+        LEFT JOIN agency_websites w ON a.id = w.agency_id
+        WHERE e.email IS NOT NULL AND e.email != '' AND e.email NOT IN ('n/a', 'N/A', 'none', '-')
+        AND LOWER(e.email) NOT IN (SELECT LOWER(email) FROM unsubscribes)
+    """
+    params = []
+
+    if exclude_today:
+        sql += """ AND a.id NOT IN (
+            SELECT DISTINCT agency_id FROM communications 
+            WHERE (date LIKE '2026-08-14%' OR date LIKE '%2026-08-14%' OR date(date) = date('now')) AND agency_id IS NOT NULL
+        )"""
+
+    if city:
+        sql += " AND a.city LIKE ?"
+        params.append(f"%{city}%")
+
+    if status:
+        sql += " AND a.status = ?"
+        params.append(status)
+
+    if segment:
+        sql += " AND a.segment = ?"
+        params.append(segment)
+
+    if source:
+        sql += " AND w.url LIKE ?"
+        params.append(f"%{source}%")
+
+    if q:
+        sql += " AND (a.name LIKE ? OR a.city LIKE ? OR a.pib LIKE ? OR a.mb LIKE ? OR e.email LIKE ?)"
+        params.extend([f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%"])
+
+    sql += " ORDER BY a.name ASC"
+
+    cursor.execute(sql, params)
+    rows = cursor.fetchall()
+    agencies = []
+
+    for r in rows:
+        ag_dict = dict(r)
+        cursor.execute("""
+            SELECT email FROM agency_emails 
+            WHERE agency_id = ? 
+            AND LOWER(email) NOT IN (SELECT LOWER(email) FROM unsubscribes)
+        """, (ag_dict['id'],))
+        ag_dict['emails'] = [row['email'] for row in cursor.fetchall() if row['email'] and row['email'].lower() not in ['n/a', 'none', '-']]
+        
+        if not ag_dict['emails']:
+            continue
+            
+        agencies.append(ag_dict)
+
+    conn.close()
+    return agencies
 
 
 def get_db_stats(db_path: str = DB_PATH) -> Dict[str, Any]:
@@ -556,6 +926,9 @@ def get_db_stats(db_path: str = DB_PATH) -> Dict[str, Any]:
     cursor.execute("SELECT COUNT(*) as total FROM communications;")
     total_comms = cursor.fetchone()['total']
 
+    cursor.execute("SELECT COUNT(*) as total FROM unsubscribes;")
+    total_unsubscribes = cursor.fetchone()['total']
+
     cursor.execute("SELECT status, COUNT(*) as count FROM agencies GROUP BY status;")
     status_counts = {row['status']: row['count'] for row in cursor.fetchall()}
 
@@ -573,10 +946,116 @@ def get_db_stats(db_path: str = DB_PATH) -> Dict[str, Any]:
         "total_emails": total_emails,
         "total_websites": total_websites,
         "total_communications": total_comms,
+        "total_unsubscribes": total_unsubscribes,
         "status_distribution": status_counts,
         "top_cities": city_counts,
         "last_email_sync": last_email_sync
     }
+
+
+def add_unsubscribe(email: str, agency_id: Optional[int] = None, reason: Optional[str] = None, db_path: str = DB_PATH) -> bool:
+    """E-posta adresini abonelikten çıkanlar listesine ekler."""
+    if not email:
+        return False
+    clean_email = email.strip().lower()
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO unsubscribes (email, agency_id, reason, created_at)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(email) DO UPDATE SET created_at = CURRENT_TIMESTAMP
+        """, (clean_email, agency_id, reason, datetime.now().isoformat()))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error adding unsubscribe {clean_email}: {e}")
+        return False
+    finally:
+        conn.close()
+
+
+def is_unsubscribed(email: str, db_path: str = DB_PATH) -> bool:
+    """E-posta adresinin abonelikten çıkıp çıkmadığını kontrol eder."""
+    if not email:
+        return False
+    clean_email = email.strip().lower()
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT 1 FROM unsubscribes WHERE LOWER(email) = ?", (clean_email,))
+    row = cursor.fetchone()
+    conn.close()
+    return bool(row)
+
+
+def get_unsubscribed_emails(db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Abonelikten çıkan e-posta adreslerinin listesini döner."""
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT u.id, u.email, u.agency_id, u.reason, u.created_at, a.name as agency_name 
+        FROM unsubscribes u
+        LEFT JOIN agencies a ON u.agency_id = a.id
+        ORDER BY u.created_at DESC
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def remove_unsubscribe(email: str, db_path: str = DB_PATH) -> bool:
+    """E-posta adresini abonelikten çıkanlar listesinden siler."""
+    if not email:
+        return False
+    clean_email = email.strip().lower()
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM unsubscribes WHERE LOWER(email) = ?", (clean_email,))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error removing unsubscribe {clean_email}: {e}")
+        return False
+    finally:
+        conn.close()
+
+
+def upsert_unsubscribes_bulk(records: List[Dict[str, Any]], source: str = "Supabase Sync", db_path: str = DB_PATH) -> Dict[str, int]:
+    """
+    Supabase'den gelen unsubscribe kayıtlarını local DB'ye upsert eder.
+    records: [{"email": "...", "unsubscribed_at": "..."}, ...]
+    Mevcut kayıtların created_at'ını değiştirmez; sadece yeni kayıt ekler.
+    """
+    inserted = 0
+    skipped = 0
+    errors = 0
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    try:
+        for record in records:
+            email = (record.get("email") or "").strip().lower()
+            if not email:
+                skipped += 1
+                continue
+            created_at = record.get("unsubscribed_at") or datetime.now().isoformat()
+            try:
+                cursor.execute("""
+                    INSERT INTO unsubscribes (email, agency_id, reason, created_at)
+                    VALUES (?, NULL, ?, ?)
+                    ON CONFLICT(email) DO NOTHING
+                """, (email, source, created_at))
+                if cursor.rowcount > 0:
+                    inserted += 1
+                else:
+                    skipped += 1
+            except Exception as e:
+                print(f"Error upserting unsubscribe {email}: {e}")
+                errors += 1
+        conn.commit()
+    finally:
+        conn.close()
+    return {"inserted": inserted, "skipped": skipped, "errors": errors}
 
 
 if __name__ == "__main__":
