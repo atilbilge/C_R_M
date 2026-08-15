@@ -82,11 +82,26 @@ def get_stats():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/agencies/activity-codes", methods=["GET"])
+def get_activity_codes():
+    """Veritabanındaki benzersiz faaliyet kodlarını döndürür."""
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT DISTINCT activity_code FROM agencies
+        WHERE activity_code IS NOT NULL AND activity_code != ''
+        ORDER BY activity_code ASC
+    """)
+    codes = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(codes)
+
+
 @app.route("/api/agencies", methods=["GET"])
 def get_agencies():
     """
     Acente Listesi ve Filtreleme
-    Query Params: q (arama), city, status, source (companywall/nekretnine)
+    Query Params: q (arama), city, status, source (companywall/nekretnine), activity_code
     """
     city = request.args.get("city", "").strip()
     status = request.args.get("status", "").strip()
@@ -94,13 +109,14 @@ def get_agencies():
     source = request.args.get("source", "").strip()
     has_phone = request.args.get("has_phone", "").strip()  # 'yes' | 'no'
     has_email = request.args.get("has_email", "").strip()  # 'yes' | 'no'
+    activity_code = request.args.get("activity_code", "").strip()
     q = request.args.get("q", "").strip()
 
     conn = db.get_connection()
     cursor = conn.cursor()
 
     sql = """
-        SELECT DISTINCT a.id, a.name, a.segment, a.long_name, a.establishment_date, a.enterprise_size, a.employees_json, a.income_json, a.city, a.address, a.pib, a.mb, a.status, a.ref_code
+        SELECT DISTINCT a.id, a.name, a.segment, a.long_name, a.establishment_date, a.enterprise_size, a.employees_json, a.income_json, a.city, a.address, a.pib, a.mb, a.status, a.ref_code, a.activity_code
         FROM agencies a
         LEFT JOIN agency_phones p ON a.id = p.agency_id
         LEFT JOIN agency_emails e ON a.id = e.agency_id
@@ -128,6 +144,10 @@ def get_agencies():
         sql += " AND w.url LIKE '%nekretnine.rs%'"
     elif source == "indomio":
         sql += " AND w.url LIKE '%indomio.rs%'"
+
+    if activity_code:
+        sql += " AND a.activity_code LIKE ?"
+        params.append(f"%{activity_code}%")
 
     if has_phone == "yes":
         sql += " AND (SELECT COUNT(*) FROM agency_phones WHERE agency_id = a.id) > 0"

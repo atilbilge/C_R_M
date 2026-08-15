@@ -837,6 +837,7 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
     status = target_filter.get("status", "").strip()
     segment = target_filter.get("segment", "").strip()
     source = target_filter.get("source", "").strip()
+    activity_code = target_filter.get("activity_code", "").strip()
     q = target_filter.get("q", "").strip()
     
     exclude_today = target_filter.get("exclude_today", True)
@@ -877,6 +878,10 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
     if source:
         sql += " AND w.url LIKE ?"
         params.append(f"%{source}%")
+
+    if activity_code:
+        sql += " AND a.activity_code LIKE ?"
+        params.append(f"%{activity_code}%")
 
     if q:
         sql += " AND (a.name LIKE ? OR a.city LIKE ? OR a.pib LIKE ? OR a.mb LIKE ? OR e.email LIKE ?)"

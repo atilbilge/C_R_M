@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilterSegment = '';
     let currentFilterHasPhone = '';
     let currentFilterHasEmail = '';
+    let currentFilterActivityCode = '';
     let currentSearchQuery = '';
     let selectedAgencyId = null;
 
@@ -252,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentFilterSegment) params.append('segment', currentFilterSegment);
             if (currentFilterHasPhone) params.append('has_phone', currentFilterHasPhone);
             if (currentFilterHasEmail) params.append('has_email', currentFilterHasEmail);
+            if (currentFilterActivityCode) params.append('activity_code', currentFilterActivityCode);
             if (currentSearchQuery) params.append('q', currentSearchQuery);
 
             const res = await fetch(`/api/agencies?${params.toString()}`);
@@ -739,6 +741,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Faaliyet Kodu filtresini yükle ve event listener ekle
+    const filterActivityCodeSelect = document.getElementById('filter-activity-code');
+    async function populateActivityCodeDropdowns() {
+        try {
+            const res = await fetch('/api/agencies/activity-codes');
+            const codes = await res.json();
+            const options = codes.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (filterActivityCodeSelect) {
+                filterActivityCodeSelect.innerHTML = '<option value="">Tüm Kodlar</option>' + options;
+            }
+            const campSelect = document.getElementById('camp-filter-activity-code');
+            if (campSelect) {
+                campSelect.innerHTML = '<option value="">Tüm Kodlar</option>' + options;
+            }
+        } catch (err) {
+            console.warn('Faaliyet kodları yüklenemedi:', err);
+        }
+    }
+    populateActivityCodeDropdowns();
+
+    if (filterActivityCodeSelect) {
+        filterActivityCodeSelect.addEventListener('change', (e) => {
+            currentFilterActivityCode = e.target.value;
+            loadAgencies();
+        });
+    }
+
     if (globalSearchInput) {
         let searchDebounceTimer;
         const triggerSearch = (val) => {
@@ -1102,6 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('camp-filter-status').value = 'NEW';
             document.getElementById('camp-filter-source').value = '';
             if (document.getElementById('camp-filter-segment')) document.getElementById('camp-filter-segment').value = '';
+            if (document.getElementById('camp-filter-activity-code')) document.getElementById('camp-filter-activity-code').value = '';
             modalCampaign.classList.add('active');
             updateUsedVariablesDetector();
         } else {
@@ -1128,6 +1158,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('camp-filter-source').value = filterObj.source || '';
                 if (document.getElementById('camp-filter-segment')) {
                     document.getElementById('camp-filter-segment').value = filterObj.segment || '';
+                }
+                if (document.getElementById('camp-filter-activity-code')) {
+                    document.getElementById('camp-filter-activity-code').value = filterObj.activity_code || '';
                 }
                 if (document.getElementById('camp-filter-exclude-today')) {
                     document.getElementById('camp-filter-exclude-today').checked = filterObj.exclude_today !== undefined ? Boolean(filterObj.exclude_today) : true;
@@ -1199,7 +1232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCalcAudience.addEventListener('click', calculateTargetAudience);
     }
 
-    ['camp-filter-city', 'camp-filter-status', 'camp-filter-segment', 'camp-filter-source', 'camp-filter-exclude-today'].forEach(id => {
+    ['camp-filter-city', 'camp-filter-status', 'camp-filter-segment', 'camp-filter-source', 'camp-filter-activity-code', 'camp-filter-exclude-today'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('change', calculateTargetAudience);
     });
@@ -1209,6 +1242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = document.getElementById('camp-filter-status').value.trim();
         const source = document.getElementById('camp-filter-source').value.trim();
         const segment = document.getElementById('camp-filter-segment') ? document.getElementById('camp-filter-segment').value.trim() : '';
+        const activity_code = document.getElementById('camp-filter-activity-code') ? document.getElementById('camp-filter-activity-code').value.trim() : '';
         const exclude_today = document.getElementById('camp-filter-exclude-today') ? document.getElementById('camp-filter-exclude-today').checked : true;
 
         const badge = document.getElementById('target-audience-count-badge');
@@ -1221,7 +1255,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/api/campaigns/preview-audience', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ target_filter: { city, status, source, segment, exclude_today } })
+                body: JSON.stringify({ target_filter: { city, status, source, segment, activity_code, exclude_today } })
             });
 
             const data = await res.json();
@@ -1266,6 +1300,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const status = document.getElementById('camp-filter-status').value.trim();
             const source = document.getElementById('camp-filter-source').value.trim();
             const segment = document.getElementById('camp-filter-segment') ? document.getElementById('camp-filter-segment').value.trim() : '';
+            const activity_code = document.getElementById('camp-filter-activity-code') ? document.getElementById('camp-filter-activity-code').value.trim() : '';
             const exclude_today = document.getElementById('camp-filter-exclude-today') ? document.getElementById('camp-filter-exclude-today').checked : true;
 
             const payload = {
@@ -1274,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 subject,
                 body_html,
                 lang,
-                target_filter: { city, status, source, segment, exclude_today }
+                target_filter: { city, status, source, segment, activity_code, exclude_today }
             };
 
             try {
