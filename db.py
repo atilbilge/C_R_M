@@ -95,6 +95,14 @@ def init_db(db_path: str = DB_PATH):
         cursor.execute("ALTER TABLE agencies ADD COLUMN activity_code TEXT;")
     except sqlite3.OperationalError:
         pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN source TEXT;")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agencies ADD COLUMN notes TEXT;")
+    except sqlite3.OperationalError:
+        pass
 
     # 2. Telefon Numaraları Tablosu
     cursor.execute("""
@@ -837,6 +845,10 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
     status = target_filter.get("status", "").strip()
     segment = target_filter.get("segment", "").strip()
     source = target_filter.get("source", "").strip()
+    source_exact = target_filter.get("source_exact", False)
+    if isinstance(source_exact, str):
+        source_exact = source_exact.lower() in ("true", "1", "yes")
+
     activity_code = target_filter.get("activity_code", "").strip()
     q = target_filter.get("q", "").strip()
     
@@ -848,7 +860,7 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
     cursor = conn.cursor()
 
     sql = """
-        SELECT DISTINCT a.id, a.name, a.segment, a.city, a.address, a.pib, a.mb, a.status, a.ref_code
+        SELECT DISTINCT a.id, a.name, a.segment, a.city, a.address, a.pib, a.mb, a.status, a.ref_code, a.source
         FROM agencies a
         JOIN agency_emails e ON a.id = e.agency_id
         LEFT JOIN agency_websites w ON a.id = w.agency_id
@@ -875,9 +887,19 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
         sql += " AND a.segment = ?"
         params.append(segment)
 
-    if source:
-        sql += " AND w.url LIKE ?"
-        params.append(f"%{source}%")
+    if source == "companywall":
+        sql += " AND (w.url LIKE '%companywall.rs%' OR a.source = 'companywall')"
+    elif source == "nekretnine":
+        sql += " AND (w.url LIKE '%nekretnine.rs%' OR a.source = 'nekretnine')"
+    elif source == "indomio":
+        sql += " AND (w.url LIKE '%indomio.rs%' OR a.source = 'indomio')"
+    elif source == "linkedin":
+        sql += " AND (a.source = 'LinkedIn' OR w.type = 'LinkedIn' OR w.url LIKE '%linkedin.com%')"
+    elif source == "kaza":
+        sql += " AND (a.source = 'kaza' OR w.type = 'kaza' OR w.url LIKE '%kaza.rs%')"
+    elif source:
+        sql += " AND (a.source LIKE ? OR w.url LIKE ?)"
+        params.extend([f"%{source}%", f"%{source}%"])
 
     if activity_code:
         sql += " AND a.activity_code LIKE ?"
@@ -904,6 +926,27 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
         
         if not ag_dict['emails']:
             continue
+
+        if source and source_exact:
+            cursor.execute("SELECT url FROM agency_websites WHERE agency_id = ?", (ag_dict['id'],))
+            urls = [w['url'] for w in cursor.fetchall()]
+            
+            sources = []
+            if ag_dict.get('source') == 'kaza' or any('kaza.rs' in u for u in urls):
+                sources.append('kaza')
+            if ag_dict.get('source') == 'LinkedIn' or any('linkedin.com' in u for u in urls):
+                sources.append('linkedin')
+            if any('companywall.rs' in u for u in urls) or ag_dict.get('source') == 'companywall':
+                sources.append('companywall')
+            if any('indomio.rs' in u for u in urls) or ag_dict.get('source') == 'indomio':
+                sources.append('indomio')
+            if any('nekretnine.rs' in u for u in urls) or ag_dict.get('source') == 'nekretnine':
+                sources.append('nekretnine')
+            if not sources:
+                sources.append('nekretnine')
+
+            if set(sources) != {source}:
+                continue
             
         agencies.append(ag_dict)
 

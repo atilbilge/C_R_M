@@ -107,6 +107,7 @@ def get_agencies():
     status = request.args.get("status", "").strip()
     segment = request.args.get("segment", "").strip()
     source = request.args.get("source", "").strip()
+    source_exact = request.args.get("source_exact", "").lower() in ["true", "1", "yes"]
     has_phone = request.args.get("has_phone", "").strip()  # 'yes' | 'no'
     has_email = request.args.get("has_email", "").strip()  # 'yes' | 'no'
     activity_code = request.args.get("activity_code", "").strip()
@@ -116,7 +117,7 @@ def get_agencies():
     cursor = conn.cursor()
 
     sql = """
-        SELECT DISTINCT a.id, a.name, a.segment, a.long_name, a.establishment_date, a.enterprise_size, a.employees_json, a.income_json, a.city, a.address, a.pib, a.mb, a.status, a.ref_code, a.activity_code
+        SELECT DISTINCT a.id, a.name, a.segment, a.long_name, a.establishment_date, a.enterprise_size, a.employees_json, a.income_json, a.city, a.address, a.pib, a.mb, a.status, a.ref_code, a.activity_code, a.source, a.notes
         FROM agencies a
         LEFT JOIN agency_phones p ON a.id = p.agency_id
         LEFT JOIN agency_emails e ON a.id = e.agency_id
@@ -139,11 +140,15 @@ def get_agencies():
         params.append(segment)
 
     if source == "companywall":
-        sql += " AND (w.url LIKE '%companywall.rs%' OR a.pib IS NOT NULL AND a.pib != '')"
+        sql += " AND (w.url LIKE '%companywall.rs%' OR a.source = 'companywall')"
     elif source == "nekretnine":
-        sql += " AND w.url LIKE '%nekretnine.rs%'"
+        sql += " AND (w.url LIKE '%nekretnine.rs%' OR a.source = 'nekretnine')"
     elif source == "indomio":
-        sql += " AND w.url LIKE '%indomio.rs%'"
+        sql += " AND (w.url LIKE '%indomio.rs%' OR a.source = 'indomio')"
+    elif source == "linkedin":
+        sql += " AND (a.source = 'LinkedIn' OR w.type = 'LinkedIn' OR w.url LIKE '%linkedin.com%')"
+    elif source == "kaza":
+        sql += " AND (a.source = 'kaza' OR w.type = 'kaza' OR w.url LIKE '%kaza.rs%')"
 
     if activity_code:
         sql += " AND a.activity_code LIKE ?"
@@ -196,15 +201,28 @@ def get_agencies():
         agency['websites'] = urls
 
         sources = []
-        if any('companywall.rs' in u for u in urls) or agency.get('pib'):
+        if agency.get('source') == 'kaza' or any('kaza.rs' in u for u in urls):
+            sources.append('kaza')
+        if agency.get('source') == 'LinkedIn' or any('linkedin.com' in u for u in urls):
+            sources.append('linkedin')
+        if any('companywall.rs' in u for u in urls) or agency.get('source') == 'companywall':
             sources.append('companywall')
-        if any('indomio.rs' in u for u in urls):
+        if any('indomio.rs' in u for u in urls) or agency.get('source') == 'indomio':
             sources.append('indomio')
-        if any('nekretnine.rs' in u for u in urls) or not sources:
+        if any('nekretnine.rs' in u for u in urls) or agency.get('source') == 'nekretnine':
+            sources.append('nekretnine')
+        if not sources:
             sources.append('nekretnine')
         agency['sources'] = sources
 
+        if source and source_exact:
+            if set(sources) != {source}:
+                continue
+
         agencies.append(agency)
+
+    conn.close()
+    return jsonify(agencies)
 
     conn.close()
     return jsonify(agencies)

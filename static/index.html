@@ -179,12 +179,20 @@
 
                             <div class="filter-group">
                                 <label><i class="fa-solid fa-globe"></i> Kaynak:</label>
-                                <select id="filter-source" class="custom-select">
-                                    <option value="">Tüm Kaynaklar</option>
-                                    <option value="companywall">CompanyWall.rs</option>
-                                    <option value="nekretnine">Nekretnine.rs</option>
-                                    <option value="indomio">Indomio.rs</option>
-                                </select>
+                                <div class="source-filter-wrapper">
+                                    <select id="filter-source" class="custom-select">
+                                        <option value="">Tüm Kaynaklar</option>
+                                        <option value="companywall">CompanyWall.rs</option>
+                                        <option value="nekretnine">Nekretnine.rs</option>
+                                        <option value="indomio">Indomio.rs</option>
+                                        <option value="linkedin">LinkedIn</option>
+                                        <option value="kaza">Kaza.rs</option>
+                                    </select>
+                                    <label class="source-exact-toggle" title="Seçilen kaynaktan gelen, yanında başka hiçbir kaynak bulunmayan acenteleri süzmek için işaretleyin">
+                                        <input type="checkbox" id="filter-source-exact" />
+                                        <span><i class="fa-solid fa-bullseye"></i> Sadece bu kaynak</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <div class="filter-group">
@@ -675,46 +683,62 @@
                         <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fa-solid fa-filter" style="color: var(--accent-indigo);"></i> Hedef Kitle Filtreleri
                         </h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;">
-                            <div>
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Şehir Filtresi:</label>
-                                <input type="text" id="camp-filter-city" class="custom-input" placeholder="Tüm Şehirler">
+                        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                            <!-- Satır 1: Temel Filtreler -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem;">
+                                <div>
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-city"></i> Şehir Filtresi:</label>
+                                    <input type="text" id="camp-filter-city" class="custom-input" placeholder="Tüm Şehirler" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-filter"></i> Acente Statüsü:</label>
+                                    <select id="camp-filter-status" class="custom-select" style="width: 100%;">
+                                        <option value="">Tüm Statüler</option>
+                                        <option value="NEW" selected>Yeni (NEW)</option>
+                                        <option value="TEST">Test (TEST)</option>
+                                        <option value="SENT">Gönderildi (SENT)</option>
+                                        <option value="CONTACTED">İletişim Kuruldu (CONTACTED)</option>
+                                        <option value="RESPONDED">Yanıt Geldi (RESPONDED)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-chart-pie"></i> Acente Segmenti:</label>
+                                    <select id="camp-filter-segment" class="custom-select" style="width: 100%;">
+                                        <option value="">Tüm Segmentler</option>
+                                        <option value="A-Kurumsal">A-Kurumsal (80+ Çalışan)</option>
+                                        <option value="B-BuyuyenOrta">B-BuyuyenOrta (Büyüyen)</option>
+                                        <option value="C-KuculenOrta">C-KuculenOrta (Küçülen)</option>
+                                        <option value="D-Kucuk">D-Kucuk (1-9 Çalışan)</option>
+                                        <option value="E-Anomali">E-Anomali (0 Çalışan / Verisiz)</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div>
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Acente Statüsü:</label>
-                                <select id="camp-filter-status" class="custom-select">
-                                    <option value="">Tüm Statüler</option>
-                                    <option value="NEW" selected>Yeni (NEW)</option>
-                                    <option value="TEST">Test (TEST)</option>
-                                    <option value="SENT">Gönderildi (SENT)</option>
-                                    <option value="CONTACTED">İletişim Kuruldu (CONTACTED)</option>
-                                    <option value="RESPONDED">Yanıt Geldi (RESPONDED)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Acente Segmenti:</label>
-                                <select id="camp-filter-segment" class="custom-select">
-                                    <option value="">Tüm Segmentler</option>
-                                    <option value="A-Kurumsal">A-Kurumsal (80+ Çalışan)</option>
-                                    <option value="B-BuyuyenOrta">B-BuyuyenOrta (Büyüyen)</option>
-                                    <option value="C-KuculenOrta">C-KuculenOrta (Küçülen)</option>
-                                    <option value="D-Kucuk">D-Kucuk (1-9 Çalışan)</option>
-                                    <option value="E-Anomali">E-Anomali (0 Çalışan / Verisiz)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Kaynak / Platform:</label>
-                                <select id="camp-filter-source" class="custom-select">
-                                    <option value="">Tümü</option>
-                                    <option value="companywall">CompanyWall</option>
-                                    <option value="nekretnine">Nekretnine.rs</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;"><i class="fa-solid fa-code-branch"></i> Faaliyet Kodu:</label>
-                                <select id="camp-filter-activity-code" class="custom-select">
-                                    <option value="">Tüm Kodlar</option>
-                                </select>
+
+                            <!-- Satır 2: Kaynak ve Faaliyet Kodu -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.85rem; align-items: flex-end;">
+                                <div>
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-globe"></i> Kaynak / Platform:</label>
+                                    <div class="source-filter-wrapper">
+                                        <select id="camp-filter-source" class="custom-select" style="flex: 1;">
+                                            <option value="">Tümü (Tüm Kaynaklar)</option>
+                                            <option value="companywall">CompanyWall</option>
+                                            <option value="nekretnine">Nekretnine.rs</option>
+                                            <option value="indomio">Indomio.rs</option>
+                                            <option value="linkedin">LinkedIn</option>
+                                            <option value="kaza">Kaza.rs</option>
+                                        </select>
+                                        <label class="source-exact-toggle" title="Seçilen kaynaktan gelen, yanında başka hiçbir kaynak bulunmayan acentelere göndermek için işaretleyin">
+                                            <input type="checkbox" id="camp-filter-source-exact" />
+                                            <span><i class="fa-solid fa-bullseye"></i> Sadece bu kaynak</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-code-branch"></i> Faaliyet Kodu:</label>
+                                    <select id="camp-filter-activity-code" class="custom-select" style="width: 100%;">
+                                        <option value="">Tüm Kodlar</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
