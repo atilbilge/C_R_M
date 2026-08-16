@@ -110,6 +110,7 @@ def get_agencies():
     source_exact = request.args.get("source_exact", "").lower() in ["true", "1", "yes"]
     has_phone = request.args.get("has_phone", "").strip()  # 'yes' | 'no'
     has_email = request.args.get("has_email", "").strip()  # 'yes' | 'no'
+    has_form = request.args.get("has_form", "").strip()    # 'yes' | 'no'
     activity_code = request.args.get("activity_code", "").strip()
     q = request.args.get("q", "").strip()
 
@@ -164,6 +165,11 @@ def get_agencies():
     elif has_email == "no":
         sql += " AND (SELECT COUNT(*) FROM agency_emails WHERE agency_id = a.id) = 0"
 
+    if has_form == "yes":
+        sql += " AND (SELECT COUNT(*) FROM agency_websites WHERE agency_id = a.id AND type = 'contact_form') > 0"
+    elif has_form == "no":
+        sql += " AND (SELECT COUNT(*) FROM agency_websites WHERE agency_id = a.id AND type = 'contact_form') = 0"
+
     if q:
         sql += """ AND (
             LOWER(a.name) LIKE LOWER(?) OR
@@ -195,9 +201,14 @@ def get_agencies():
         cursor.execute("SELECT email FROM agency_emails WHERE agency_id = ?", (agency['id'],))
         agency['emails'] = [e['email'] for e in cursor.fetchall()]
 
-        # Web siteleri & kaynaklar
-        cursor.execute("SELECT url FROM agency_websites WHERE agency_id = ?", (agency['id'],))
-        urls = [w['url'] for w in cursor.fetchall()]
+        # Web siteleri & kaynaklar & mesaj formu
+        cursor.execute("SELECT url, type FROM agency_websites WHERE agency_id = ?", (agency['id'],))
+        w_rows = cursor.fetchall()
+        urls = [w['url'] for w in w_rows]
+        form_urls = [w['url'] for w in w_rows if w['type'] == 'contact_form']
+        agency['urls'] = urls
+        agency['has_contact_form'] = len(form_urls) > 0
+        agency['contact_form_url'] = form_urls[0] if form_urls else None
         agency['websites'] = urls
 
         sources = []

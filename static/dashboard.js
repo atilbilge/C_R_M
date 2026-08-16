@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilterSegment = '';
     let currentFilterHasPhone = '';
     let currentFilterHasEmail = '';
+    let currentFilterHasForm = '';
     let currentFilterActivityCode = '';
     let currentSearchQuery = '';
     let selectedAgencyId = null;
@@ -259,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentFilterSegment) params.append('segment', currentFilterSegment);
             if (currentFilterHasPhone) params.append('has_phone', currentFilterHasPhone);
             if (currentFilterHasEmail) params.append('has_email', currentFilterHasEmail);
+            if (currentFilterHasForm) params.append('has_form', currentFilterHasForm);
             if (currentFilterActivityCode) params.append('activity_code', currentFilterActivityCode);
             if (currentSearchQuery) params.append('q', currentSearchQuery);
 
@@ -312,6 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (srcStr.includes('nekretnine')) {
                     sourceBadges += `<span class="badge-source source-nekretnine"><i class="fa-solid fa-house"></i> Nekretnine</span>`;
+                }
+
+                if (agency.has_contact_form) {
+                    sourceBadges += `<span class="badge-source" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);" title="Mesaj Formu: ${escapeHtml(agency.contact_form_url || '')}"><i class="fa-solid fa-paper-plane"></i> Web Formu</span>`;
                 }
 
                 if (!sourceBadges) {
@@ -779,6 +785,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const filterHasFormSelect = document.getElementById('filter-has-form');
+    if (filterHasFormSelect) {
+        filterHasFormSelect.addEventListener('change', (e) => {
+            currentFilterHasForm = e.target.value;
+            loadAgencies();
+        });
+    }
+
     // Faaliyet Kodu filtresini yükle ve event listener ekle
     const filterActivityCodeSelect = document.getElementById('filter-activity-code');
     async function populateActivityCodeDropdowns() {
@@ -833,16 +847,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Helper to filter agencies and navigate to Agencies tab
-    window.filterAndShowAgencies = function({ status = '', city = '', hasPhone = '', hasEmail = '', search = '' } = {}) {
+    window.filterAndShowAgencies = function({ status = '', city = '', hasPhone = '', hasEmail = '', hasForm = '', search = '' } = {}) {
         currentFilterStatus = status;
         currentFilterCity = city;
         currentFilterHasPhone = hasPhone;
         currentFilterHasEmail = hasEmail;
+        currentFilterHasForm = hasForm;
         currentSearchQuery = search;
 
         if (filterCitySelect) filterCitySelect.value = city;
         if (filterHasPhoneSelect) filterHasPhoneSelect.value = hasPhone;
         if (filterHasEmailSelect) filterHasEmailSelect.value = hasEmail;
+        if (filterHasFormSelect) filterHasFormSelect.value = hasForm;
         if (globalSearchInput) globalSearchInput.value = search;
 
         statusPills.forEach(p => {
@@ -1174,6 +1190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (document.getElementById('camp-filter-segment')) document.getElementById('camp-filter-segment').value = '';
             if (document.getElementById('camp-filter-activity-code')) document.getElementById('camp-filter-activity-code').value = '';
+            if (document.getElementById('camp-filter-has-form')) document.getElementById('camp-filter-has-form').value = '';
             modalCampaign.classList.add('active');
             updateUsedVariablesDetector();
         } else {
@@ -1212,6 +1229,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (document.getElementById('camp-filter-activity-code')) {
                     document.getElementById('camp-filter-activity-code').value = filterObj.activity_code || '';
+                }
+                if (document.getElementById('camp-filter-has-form')) {
+                    document.getElementById('camp-filter-has-form').value = filterObj.has_form || '';
                 }
                 if (document.getElementById('camp-filter-exclude-today')) {
                     document.getElementById('camp-filter-exclude-today').checked = filterObj.exclude_today !== undefined ? Boolean(filterObj.exclude_today) : true;
@@ -1283,7 +1303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCalcAudience.addEventListener('click', calculateTargetAudience);
     }
 
-    ['camp-filter-city', 'camp-filter-status', 'camp-filter-segment', 'camp-filter-source', 'camp-filter-source-exact', 'camp-filter-activity-code', 'camp-filter-exclude-today'].forEach(id => {
+    ['camp-filter-city', 'camp-filter-status', 'camp-filter-segment', 'camp-filter-source', 'camp-filter-source-exact', 'camp-filter-activity-code', 'camp-filter-has-form', 'camp-filter-exclude-today'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('change', (e) => {
             if (id === 'camp-filter-source' && !e.target.value) {
@@ -1311,6 +1331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const source_exact = document.getElementById('camp-filter-source-exact') ? document.getElementById('camp-filter-source-exact').checked : false;
         const segment = document.getElementById('camp-filter-segment') ? document.getElementById('camp-filter-segment').value.trim() : '';
         const activity_code = document.getElementById('camp-filter-activity-code') ? document.getElementById('camp-filter-activity-code').value.trim() : '';
+        const has_form = document.getElementById('camp-filter-has-form') ? document.getElementById('camp-filter-has-form').value.trim() : '';
         const exclude_today = document.getElementById('camp-filter-exclude-today') ? document.getElementById('camp-filter-exclude-today').checked : true;
 
         const badge = document.getElementById('target-audience-count-badge');
@@ -1323,7 +1344,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/api/campaigns/preview-audience', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ target_filter: { city, status, source, source_exact, segment, activity_code, exclude_today } })
+                body: JSON.stringify({ target_filter: { city, status, source, source_exact, segment, activity_code, has_form, exclude_today } })
             });
 
             const data = await res.json();
@@ -1370,6 +1391,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const source_exact = document.getElementById('camp-filter-source-exact') ? document.getElementById('camp-filter-source-exact').checked : false;
             const segment = document.getElementById('camp-filter-segment') ? document.getElementById('camp-filter-segment').value.trim() : '';
             const activity_code = document.getElementById('camp-filter-activity-code') ? document.getElementById('camp-filter-activity-code').value.trim() : '';
+            const has_form = document.getElementById('camp-filter-has-form') ? document.getElementById('camp-filter-has-form').value.trim() : '';
             const exclude_today = document.getElementById('camp-filter-exclude-today') ? document.getElementById('camp-filter-exclude-today').checked : true;
 
             const payload = {
@@ -1378,7 +1400,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 subject,
                 body_html,
                 lang,
-                target_filter: { city, status, source, source_exact, segment, activity_code, exclude_today }
+                target_filter: { city, status, source, source_exact, segment, activity_code, has_form, exclude_today }
             };
 
             try {

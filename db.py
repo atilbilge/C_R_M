@@ -850,6 +850,7 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
         source_exact = source_exact.lower() in ("true", "1", "yes")
 
     activity_code = target_filter.get("activity_code", "").strip()
+    has_form = target_filter.get("has_form", "").strip()
     q = target_filter.get("q", "").strip()
     
     exclude_today = target_filter.get("exclude_today", True)
@@ -904,6 +905,11 @@ def get_campaign_target_agencies(target_filter: Any, db_path: str = DB_PATH) -> 
     if activity_code:
         sql += " AND a.activity_code LIKE ?"
         params.append(f"%{activity_code}%")
+
+    if has_form == "yes":
+        sql += " AND (SELECT COUNT(*) FROM agency_websites WHERE agency_id = a.id AND type = 'contact_form') > 0"
+    elif has_form == "no":
+        sql += " AND (SELECT COUNT(*) FROM agency_websites WHERE agency_id = a.id AND type = 'contact_form') = 0"
 
     if q:
         sql += " AND (a.name LIKE ? OR a.city LIKE ? OR a.pib LIKE ? OR a.mb LIKE ? OR e.email LIKE ?)"

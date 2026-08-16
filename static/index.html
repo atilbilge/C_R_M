@@ -239,6 +239,15 @@
                             </div>
 
                             <div class="filter-group">
+                                <label><i class="fa-solid fa-paper-plane"></i> Mesaj Formu:</label>
+                                <select id="filter-has-form" class="custom-select">
+                                    <option value="">Tümü</option>
+                                    <option value="yes">Mesaj Formu Var</option>
+                                    <option value="no">Mesaj Formu Yok</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
                                 <label><i class="fa-solid fa-code-branch"></i> Faaliyet Kodu:</label>
                                 <select id="filter-activity-code" class="custom-select">
                                     <option value="">Tüm Kodlar</option>
@@ -714,8 +723,8 @@
                                 </div>
                             </div>
 
-                            <!-- Satır 2: Kaynak ve Faaliyet Kodu -->
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.85rem; align-items: flex-end;">
+                            <!-- Satır 2: Kaynak, Faaliyet Kodu ve Mesaj Formu -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; align-items: flex-end;">
                                 <div>
                                     <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-globe"></i> Kaynak / Platform:</label>
                                     <div class="source-filter-wrapper">
@@ -737,6 +746,14 @@
                                     <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-code-branch"></i> Faaliyet Kodu:</label>
                                     <select id="camp-filter-activity-code" class="custom-select" style="width: 100%;">
                                         <option value="">Tüm Kodlar</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-paper-plane"></i> Web Mesaj Formu:</label>
+                                    <select id="camp-filter-has-form" class="custom-select" style="width: 100%;">
+                                        <option value="">Tümü</option>
+                                        <option value="yes">Mesaj Formu Var</option>
+                                        <option value="no">Mesaj Formu Yok</option>
                                     </select>
                                 </div>
                             </div>
