@@ -3,14 +3,16 @@
 enrich_agency_emails.py
 ------------------------
 Veritabanında (`acenteler.db`) e-postası olmayan acentelerin harici (kendi) web sitelerini
-(libero.rs, feniks.rs vb.) tarayarak e-posta adreslerini (info@, office@, kontakt@) otomatik
-bulan ve `agency_emails` tablosuna ekleyen zenginleştirme betiği.
+(libero.rs, feniks.rs, ags-nekretnine.com vb.) tarayarak e-posta adreslerini (info@, office@, kontakt@)
+otomatik bulan ve `agency_emails` tablosuna ekleyen zenginleştirme betiği.
 
-Özellikler:
+Gelişmiş Özellikler:
 - Portalları (kaza.rs, nekretnine.rs, indomio.rs, facebook, instagram vb.) otomatik eler.
 - Ana sayfadaki mailto: bağlantılarını ve regex e-posta kalıplarını tarar.
-- E-posta bulunamazsa `/kontakt`, `/contact`, `/o-nama` ve ana sayfadaki iletişim sayfalarını tarar.
-- Görsel/CSS uzantılı sahte e-postaları (.png, .jpg, @sentry.io, @2x vb.) filtreler.
+- JS yönlendirmelerini (window.location, location.href) ve Meta Refresh etiketlerini takip eder.
+- E-posta bulunamazsa `/kontakt`, `/contact`, `/o-nama`, `/kontakt-opcije` ve ana sayfadaki iletişim sayfalarını tarar.
+- Görsel/CSS/Yazılım satıcı uzantılı sahte e-postaları (.png, .jpg, @sentry.io, @glitchtip, @2x vb.) filtreler.
+- URL-encoded e-postaları (%20kontakt@...) otomatik çözer (unquote).
 - Çoklu iş parçacığı (ThreadPoolExecutor) ile yüksek hızda çalışır.
 """
 
@@ -21,7 +23,7 @@ import time
 import sqlite3
 import random
 from typing import List, Set, Dict, Optional, Tuple, Any
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, unquote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 from curl_cffi import requests as cffi_requests
@@ -46,7 +48,8 @@ EXCLUDED_EMAIL_PATTERNS = [
     "example.com", "domain.com", "yourdomain.com", "email.com", "test.com",
     "sentry.io", "wixpress.com", "schema.org", "glitchtip.com", "opencart.com",
     "wordpress.org", "github.com", "elementor.com", "cloudflare.com", "google.com",
-    "facebook.com", "@2x", "@3x", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp",
+    "facebook.com", "pravnakomora.rs", "vortexdesign.net", "la-studioweb.com",
+    "favethemes.com", "@2x", "@3x", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp",
     ".js", ".css"
 ]
 
@@ -67,11 +70,19 @@ def get_db_connection() -> sqlite3.Connection:
     return conn
 
 
+def clean_email(email: str) -> str:
+    """URL-encoded karaketerleri çözüp e-postadaki gereksiz ekleri temizler."""
+    email = unquote(email).strip().strip(".:;,")
+    if email.lower().startswith("mailto:"):
+        email = email[7:].split("?")[0]
+    return email.lower().strip()
+
+
 def is_valid_email(email: str) -> bool:
     """E-postanın geçerli ve gerçek bir iletişim adresi olup olmadığını doğrular."""
     if not email or "@" not in email:
         return False
-    email = email.lower().strip().strip(".:;,")
+    email = clean_email(email)
     
     # Uzantı ve sahte desen kontrolleri
     for pat in EXCLUDED_EMAIL_PATTERNS:
@@ -89,15 +100,7 @@ def is_valid_email(email: str) -> bool:
     return True
 
 
-def clean_email(email: str) -> str:
-    """E-postadaki gereksiz ekleri ve noktalama işaretlerini temizler."""
-    email = email.strip().strip(".:;,")
-    if email.startswith("mailto:"):
-        email = email.replace("mailto:", "").split("?")[0]
-    return email.lower().strip()
-
-
-def extract_emails_from_html(html: str, base_url: str) -> Set[str]:
+def extract_emails_from_html(html: str) -> Set[str]:
     """HTML içeriğinden mailto ve regex ile e-postaları filtreleyerek çıkarır."""
     found_emails = set()
     soup = BeautifulSoup(html, "html.parser")
@@ -120,25 +123,67 @@ def extract_emails_from_html(html: str, base_url: str) -> Set[str]:
     return found_emails
 
 
-def fetch_url(url: str, timeout: int = 10) -> Optional[str]:
-    """CURL Impersonate ile TLS korumalı URL isteği atar."""
+def fetch_url_with_redirects(url: str, timeout: int = 10, max_redirects: int = 3) -> Tuple[Optional[str], str]:
+    """
+    HTTP 301/302 yanı sıra JS Redirect (window.location) ve Meta Refresh etiketlerini
+    otomatik takip eden gelişmiş URL çekme fonksiyonu.
+    """
+    if max_redirects <= 0:
+        return None, url
+
     url = url.replace(" ", "").strip()
     headers = {
         "User-Agent": random.choice(USER_AGENTS),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "sr,en-US;q=0.9,en;q=0.8",
     }
+    
     try:
         resp = cffi_requests.get(url, headers=headers, timeout=timeout, verify=False, allow_redirects=True)
-        if resp.status_code == 200 and resp.text:
-            return resp.text
+        if resp.status_code != 200 or not resp.text:
+            return None, url
+            
+        html = resp.text
+        curr_url = resp.url
+
+        soup = BeautifulSoup(html, "html.parser")
+
+        # 1. Meta Refresh kontrolü
+        meta_refresh = soup.find("meta", attrs={"http-equiv": re.compile(r"refresh", re.I)})
+        if meta_refresh and "content" in meta_refresh.attrs:
+            content = meta_refresh["content"]
+            if "url=" in content.lower():
+                redirect_url = content.split("url=")[-1].strip(" \"'").strip()
+                if redirect_url:
+                    full_redirect = urljoin(curr_url, redirect_url)
+                    return fetch_url_with_redirects(full_redirect, timeout, max_redirects - 1)
+
+        # 2. JS location redirect kontrolü
+        js_match = re.search(r'(?:window\.|document\.)?location(?:\.href|\.replace)?\s*(?:=|\()\s*["\']([^"\']+)["\']', html, re.I)
+        if js_match:
+            redirect_url = js_match.group(1).strip()
+            if redirect_url and not redirect_url.startswith("javascript:") and redirect_url != curr_url:
+                full_redirect = urljoin(curr_url, redirect_url)
+                return fetch_url_with_redirects(full_redirect, timeout, max_redirects - 1)
+
+        # 3. Frame / Iframe kontrolü (ana sayfada bağlantı yoksa)
+        if len(soup.find_all("a")) == 0:
+            frames = soup.find_all(["frame", "iframe"], src=True)
+            if frames:
+                frame_src = frames[0]["src"].strip()
+                if frame_src:
+                    full_redirect = urljoin(curr_url, frame_src)
+                    return fetch_url_with_redirects(full_redirect, timeout, max_redirects - 1)
+
+        return html, curr_url
     except Exception:
         pass
-    return None
+
+    return None, url
 
 
 def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
-    """Tek bir acentenin harici web sitesini ve iletişim sayfalarını tarar."""
+    """Tek bir acentenin harici web sitesini ve iletişim sayfalarını JS yönlendirmeleriyle birlikte tarar."""
     ag_id = agency["id"]
     ag_name = agency["name"]
     site_url = agency["url"].replace(" ", "").strip()
@@ -148,10 +193,10 @@ def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
 
     emails_found = set()
 
-    # 1. Ana Sayfayı Çek ve Tara
-    html = fetch_url(site_url)
+    # 1. Ana Sayfayı Çek ve Tara (JS / Meta Yönlendirmeleri Takip Ederek)
+    html, final_url = fetch_url_with_redirects(site_url)
     if html:
-        emails_found.update(extract_emails_from_html(html, site_url))
+        emails_found.update(extract_emails_from_html(html))
 
     # 2. E-posta bulunamadıysa İletişim / Kontakt Sayfalarını Tara
     if not emails_found and html:
@@ -164,24 +209,28 @@ def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
             text = a.get_text().strip().lower()
             href_lower = href.lower()
             
-            if any(k in href_lower or k in text for k in ["kontakt", "contact", "o-nama", "about", "impresum"]):
-                full_link = urljoin(site_url, href)
+            if any(k in href_lower or k in text for k in ["kontakt", "contact", "o-nama", "about", "impresum", "poslovanje", "tim"]):
+                full_link = urljoin(final_url, href)
                 parsed = urlparse(full_link)
-                if parsed.netloc == urlparse(site_url).netloc:
+                if parsed.netloc == urlparse(final_url).netloc:
                     contact_links.append(full_link)
 
         # Bilinen standart iletişim yollarını da ekle
-        base_domain = f"{urlparse(site_url).scheme}://{urlparse(site_url).netloc}"
-        standard_paths = [f"{base_domain}/kontakt", f"{base_domain}/contact", f"{base_domain}/o-nama"]
+        parsed_base = urlparse(final_url)
+        base_domain = f"{parsed_base.scheme}://{parsed_base.netloc}"
+        standard_paths = [
+            f"{base_domain}/kontakt", f"{base_domain}/contact", f"{base_domain}/o-nama",
+            f"{base_domain}/kontakt.html", f"{base_domain}/kontakt-opcije.html"
+        ]
         for sp in standard_paths:
             if sp not in contact_links:
                 contact_links.append(sp)
 
-        # Bulunan iletişim sayfalarını dene (maksimum 3 sayfa)
-        for cl in list(set(contact_links))[:3]:
-            c_html = fetch_url(cl, timeout=8)
+        # Bulunan iletişim sayfalarını dene (maksimum 4 sayfa)
+        for cl in list(set(contact_links))[:4]:
+            c_html, c_final = fetch_url_with_redirects(cl, timeout=8)
             if c_html:
-                c_emails = extract_emails_from_html(c_html, cl)
+                c_emails = extract_emails_from_html(c_html)
                 if c_emails:
                     emails_found.update(c_emails)
                     break
@@ -191,7 +240,7 @@ def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
 
 def enrich_agency_emails(source_filter: Optional[str] = None, max_workers: int = 8):
     """E-postası eksik olan acenteleri harici sitelerinden tarayarak veritabanını günceller."""
-    log("🚀 Web Sitesinden E-posta Zenginleştirme İşlemi Başlatılıyor...")
+    log("🚀 Gelişmiş Web Sitesi E-posta Zenginleştirme İşlemi Başlatılıyor...")
 
     conn = get_db_connection()
     cur = conn.cursor()
