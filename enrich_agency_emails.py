@@ -3,11 +3,12 @@
 enrich_agency_emails.py
 ------------------------
 Veritabanında (`acenteler.db`) e-postası olmayan acentelerin harici (kendi) web sitelerini
-(libero.rs, feniks.rs, ags-nekretnine.com vb.) tarayarak e-posta adreslerini (info@, office@, kontakt@)
+(libero.rs, feniks.rs, ags-nekretnine.com, coronasmnekretnine.com vb.) tarayarak e-posta adreslerini (info@, office@, kontakt@)
 otomatik bulan ve `agency_emails` tablosuna ekleyen zenginleştirme betiği.
 
 Gelişmiş Özellikler:
 - Portalları (kaza.rs, nekretnine.rs, indomio.rs, facebook, instagram vb.) otomatik eler.
+- Cloudflare Email Protection (`data-cfemail` ve `/cdn-cgi/l/email-protection#...`) korumasını otomatik çözer (XOR Decoder).
 - Ana sayfadaki mailto: bağlantılarını ve regex e-posta kalıplarını tarar.
 - JS yönlendirmelerini (window.location, location.href) ve Meta Refresh etiketlerini takip eder.
 - E-posta bulunamazsa `/kontakt`, `/contact`, `/o-nama`, `/kontakt-opcije` ve ana sayfadaki iletişim sayfalarını tarar.
@@ -37,13 +38,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
 ]
 
-# Elenecek alan adları ve uzantılar
-EXCLUDED_DOMAINS = [
-    "kaza.rs", "nekretnine.rs", "indomio.rs", "companywall.rs", "linkedin.com",
-    "facebook.com", "instagram.com", "youtube.com", "twitter.com", "x.com",
-    "google.com", "wixpress.com", "sentry.io", "schema.org", "wordpress.org"
-]
-
 EXCLUDED_EMAIL_PATTERNS = [
     "example.com", "domain.com", "yourdomain.com", "email.com", "test.com",
     "sentry.io", "wixpress.com", "schema.org", "glitchtip.com", "opencart.com",
@@ -68,6 +62,19 @@ def get_db_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def decode_cloudflare_email(cfemail_hex: str) -> str:
+    """Cloudflare Email Protection hex dizesini XOR anahtarıyla gerçek e-postaya dönüştürür."""
+    try:
+        r = int(cfemail_hex[:2], 16)
+        email_chars = []
+        for n in range(2, len(cfemail_hex), 2):
+            char_code = int(cfemail_hex[n:n+2], 16) ^ r
+            email_chars.append(chr(char_code))
+        return "".join(email_chars)
+    except Exception:
+        return ""
 
 
 def clean_email(email: str) -> str:
@@ -101,19 +108,41 @@ def is_valid_email(email: str) -> bool:
 
 
 def extract_emails_from_html(html: str) -> Set[str]:
-    """HTML içeriğinden mailto ve regex ile e-postaları filtreleyerek çıkarır."""
+    """HTML içeriğinden mailto, Cloudflare Email Protection ve regex ile e-postaları çıkarır."""
     found_emails = set()
     soup = BeautifulSoup(html, "html.parser")
 
-    # 1. mailto: etiketleri
+    # 1. mailto: ve Cloudflare link etiketleri
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
         if href.lower().startswith("mailto:"):
             em = clean_email(href)
             if is_valid_email(em):
                 found_emails.add(em)
+        elif "email-protection#" in href:
+            hex_str = href.split("email-protection#")[-1].split("?")[0].strip()
+            decoded = clean_email(decode_cloudflare_email(hex_str))
+            if is_valid_email(decoded):
+                found_emails.add(decoded)
 
-    # 2. Metin içerisindeki regex kalıpları
+    # 2. Cloudflare data-cfemail öznitelikleri
+    for el in soup.find_all(attrs={"data-cfemail": True}):
+        decoded = clean_email(decode_cloudflare_email(el["data-cfemail"]))
+        if is_valid_email(decoded):
+            found_emails.add(decoded)
+
+    # 3. Cloudflare regex araması (HTML genelinde)
+    for m in re.findall(r'email-protection#([a-fA-F0-9]+)', html):
+        decoded = clean_email(decode_cloudflare_email(m))
+        if is_valid_email(decoded):
+            found_emails.add(decoded)
+
+    for m in re.findall(r'data-cfemail=["\']([a-fA-F0-9]+)["\']', html):
+        decoded = clean_email(decode_cloudflare_email(m))
+        if is_valid_email(decoded):
+            found_emails.add(decoded)
+
+    # 4. Düz metin regex kalıpları
     raw_matches = EMAIL_REGEX.findall(html)
     for em in raw_matches:
         cleaned = clean_email(em)
@@ -183,7 +212,7 @@ def fetch_url_with_redirects(url: str, timeout: int = 10, max_redirects: int = 3
 
 
 def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
-    """Tek bir acentenin harici web sitesini ve iletişim sayfalarını JS yönlendirmeleriyle birlikte tarar."""
+    """Tek bir acentenin harici web sitesini ve iletişim sayfalarını JS ve Cloudflare çözümlemesi ile tarar."""
     ag_id = agency["id"]
     ag_name = agency["name"]
     site_url = agency["url"].replace(" ", "").strip()
@@ -193,7 +222,7 @@ def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
 
     emails_found = set()
 
-    # 1. Ana Sayfayı Çek ve Tara (JS / Meta Yönlendirmeleri Takip Ederek)
+    # 1. Ana Sayfayı Çek ve Tara
     html, final_url = fetch_url_with_redirects(site_url)
     if html:
         emails_found.update(extract_emails_from_html(html))
@@ -240,7 +269,7 @@ def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
 
 def enrich_agency_emails(source_filter: Optional[str] = None, max_workers: int = 8):
     """E-postası eksik olan acenteleri harici sitelerinden tarayarak veritabanını günceller."""
-    log("🚀 Gelişmiş Web Sitesi E-posta Zenginleştirme İşlemi Başlatılıyor...")
+    log("🚀 Cloudflare & JS Destekli Web Sitesi E-posta Zenginleştirme İşlemi Başlatılıyor...")
 
     conn = get_db_connection()
     cur = conn.cursor()
