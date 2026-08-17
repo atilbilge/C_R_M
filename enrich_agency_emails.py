@@ -3,12 +3,13 @@
 enrich_agency_emails.py
 ------------------------
 Veritabanında (`acenteler.db`) e-postası olmayan acentelerin harici (kendi) web sitelerini
-(libero.rs, feniks.rs, ags-nekretnine.com, coronasmnekretnine.com vb.) tarayarak e-posta adreslerini (info@, office@, kontakt@)
-otomatik bulan ve `agency_emails` tablosuna ekleyen zenginleştirme betiği.
+(libero.rs, feniks.rs, ags-nekretnine.com, coronasmnekretnine.com, gaknekretnine.com vb.) tarayarak
+e-posta adreslerini (info@, office@, kontakt@) otomatik bulan ve `agency_emails` tablosuna ekleyen zenginleştirme betiği.
 
 Gelişmiş Özellikler:
 - Portalları (kaza.rs, nekretnine.rs, indomio.rs, facebook, instagram vb.) otomatik eler.
 - Cloudflare Email Protection (`data-cfemail` ve `/cdn-cgi/l/email-protection#...`) korumasını otomatik çözer (XOR Decoder).
+- Cloudflare 403 Turnstile engeli bulunan siteler için DuckDuckGo Arama İndeksi yedeklemesini (`site:domain.com`) kullanır.
 - Ana sayfadaki mailto: bağlantılarını ve regex e-posta kalıplarını tarar.
 - JS yönlendirmelerini (window.location, location.href) ve Meta Refresh etiketlerini takip eder.
 - E-posta bulunamazsa `/kontakt`, `/contact`, `/o-nama`, `/kontakt-opcije` ve ana sayfadaki iletişim sayfalarını tarar.
@@ -43,8 +44,8 @@ EXCLUDED_EMAIL_PATTERNS = [
     "sentry.io", "wixpress.com", "schema.org", "glitchtip.com", "opencart.com",
     "wordpress.org", "github.com", "elementor.com", "cloudflare.com", "google.com",
     "facebook.com", "pravnakomora.rs", "vortexdesign.net", "la-studioweb.com",
-    "favethemes.com", "@2x", "@3x", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp",
-    ".js", ".css"
+    "favethemes.com", "duckduckgo.com", "bing.com", "@2x", "@3x", ".png", ".jpg",
+    ".jpeg", ".gif", ".svg", ".webp", ".js", ".css"
 ]
 
 EMAIL_REGEX = re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')
@@ -211,8 +212,31 @@ def fetch_url_with_redirects(url: str, timeout: int = 10, max_redirects: int = 3
     return None, url
 
 
+def search_duckduckgo_emails(domain: str) -> Set[str]:
+    """Sitenin kendisinden e-posta alınamazsa veya 403 Cloudflare engeli varsa DDG arama indeksinden e-postayı çeker."""
+    if not domain or len(domain) < 4:
+        return set()
+    url = f"https://html.duckduckgo.com/html/?q=site:{domain}"
+    headers = {
+        "User-Agent": random.choice(USER_AGENTS),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+    found_emails = set()
+    try:
+        resp = cffi_requests.get(url, headers=headers, impersonate="chrome120", timeout=10)
+        if resp.status_code == 200 and resp.text:
+            raw_matches = EMAIL_REGEX.findall(resp.text)
+            for em in raw_matches:
+                cleaned = clean_email(em)
+                if is_valid_email(cleaned) and not any(p in cleaned for p in ["duckduckgo", "bing", "google"]):
+                    found_emails.add(cleaned)
+    except Exception:
+        pass
+    return found_emails
+
+
 def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
-    """Tek bir acentenin harici web sitesini ve iletişim sayfalarını JS ve Cloudflare çözümlemesi ile tarar."""
+    """Tek bir acentenin harici web sitesini ve iletişim sayfalarını JS, Cloudflare ve Arama İndeksi ile tarar."""
     ag_id = agency["id"]
     ag_name = agency["name"]
     site_url = agency["url"].replace(" ", "").strip()
@@ -264,12 +288,19 @@ def process_agency(agency: Dict[str, Any]) -> Tuple[int, str, List[str]]:
                     emails_found.update(c_emails)
                     break
 
+    # 3. Hala E-posta bulunamadıysa (403 Cloudflare engeli veya doğrudan gizlenme durumunda) Arama İndeksinden Çek
+    if not emails_found:
+        parsed_domain = urlparse(site_url).netloc.replace("www.", "")
+        ddg_emails = search_duckduckgo_emails(parsed_domain)
+        if ddg_emails:
+            emails_found.update(ddg_emails)
+
     return ag_id, ag_name, list(emails_found)
 
 
 def enrich_agency_emails(source_filter: Optional[str] = None, max_workers: int = 8):
     """E-postası eksik olan acenteleri harici sitelerinden tarayarak veritabanını günceller."""
-    log("🚀 Cloudflare & JS Destekli Web Sitesi E-posta Zenginleştirme İşlemi Başlatılıyor...")
+    log("🚀 Cloudflare, JS & Search Index Destekli Web Sitesi E-posta Zenginleştirme İşlemi Başlatılıyor...")
 
     conn = get_db_connection()
     cur = conn.cursor()
